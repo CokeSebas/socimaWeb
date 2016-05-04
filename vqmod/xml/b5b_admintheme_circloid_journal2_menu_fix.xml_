@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<modification>
+	<id>Base5Builder - Admin Theme Circloid - Journal2 Menu Fix</id>
+	<vqmver>2.0</vqmver>
+	<author>Base5Builder.com - support@base5builder.com</author>
+	<file name="admin/view/template/admin_theme/base5builder_circloid/common/header.tpl">
+        <operation error="skip">
+            <search position="after" offset="3"><![CDATA[
+            	<li id="remove-custom-admin-page"><a href="#">Remove Page Compatibility</a></li>
+            ]]></search>
+            <add><![CDATA[
+                <?php if ($journal2): ?>
+                <li id="journal2-module">
+                	<a class="top"><span>Journal 2</span></a>
+                    <ul>
+                    	<li><a href="<?php echo $journal2; ?>" class="top">Journal 2</a></li>
+                        <li><a href="<?php echo $journal2_clear_cache; ?>">Clear Cache</a></li>
+                    </ul>
+                </li>
+                <?php endif; ?>
+            ]]></add>
+        </operation>
+	</file>
+	<file path="admin/controller/common/" name="header.php">
+		<operation error="skip">
+			<search position="after"><![CDATA[
+				$this->data['logged'] = $this->user->getUserName();
+				]]></search>
+			<add><![CDATA[
+			        $this->load->model('setting/extension');
+                    $extensions = $this->model_setting_extension->getInstalled('module');
+                    if (in_array('journal2', $extensions)) {
+                        $this->data['journal2'] = $this->url->link('module/journal2', 'token=' . $this->session->data['token'], 'SSL');
+                        $this->data['journal2_clear_cache'] = $this->url->link('module/journal2/clear_cache', 'token=' . $this->session->data['token'], 'SSL');
+                        $this->session->data['j2_redirect'] = isset($this->request->get['route']) ? $this->request->get['route'] : null;
+                    } else {
+                        $this->data['journal2'] = '';
+                    }
+            ]]></add>
+		</operation>
+	</file>
+</modification>

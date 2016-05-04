@@ -1,0 +1,6 @@
+UPGRADE KEY: F46A1-CC98E-64BB9-94C82
+
+This key can be used for getting an upgrade of the 'CSV Product Import' extension for Opencart 2.0 
+at a discounted price here:
+
+http://www.opencart.com/index.php?route=extension/extension/info&extension_id=20081

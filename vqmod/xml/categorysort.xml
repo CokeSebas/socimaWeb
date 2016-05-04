@@ -1,0 +1,136 @@
+<modification>
+	<id><![CDATA[Category Sorting]]></id>
+	<version><![CDATA[1.0]]></version>
+	<file name="admin/model/catalog/category.php">
+		<operation>
+			<search position="before"><![CDATA[public function getTotalCategoriesByLayoutId($layout_id)]]></search>
+			<add><![CDATA[
+			public function updateOrder($array){
+				$count = 1;
+				foreach ($array as $idval) {
+					$query = "UPDATE " . DB_PREFIX . "category SET sort_order = " . $count . " WHERE category_id = " . $idval;
+					$this->db->query($query);
+					$count ++;	
+				}
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/catalog/category.php">
+		<operation>
+			<search position="before"><![CDATA[public function insert() {]]></search>
+			<add><![CDATA[public function updateOrder(){
+		$this->load->language('catalog/category');
+		
+		$this->load->model('user/user');
+		$groups = $this->model_user_user->getUserGroup($_SESSION['user_id']);
+		$group_user = $groups['user_group_id'];
+
+    	$this->document->setTitle($this->language->get('heading_title'));
+		
+		$this->load->model('catalog/category');
+		if(isset($this->request->post['update']) && isset($this->request->post['arrayorder']) && $this->validateUpdateOrder()){
+		//if($group_user == 1 OR $group_user == 16){
+			$this->model_catalog_category->updateOrder($this->request->post['arrayorder']);
+			$this->clearcache();
+			echo 'Exito! Ha cambiado el orden de las categorias. <a style="text-decoration:none" href="'.$this->url->link('catalog/category', 'token=' . $this->session->data['token'], 'SSL').'">[ x ]</a>';
+		}
+		else
+			echo 'You do not have permission to update';
+		
+	}
+	public function clearcache() {
+		$this->load->language('tool/error_log');
+		$files = glob(DIR_CACHE . 'cache.*');
+		foreach($files as $file){
+			$this->deldir($file);
+		}
+                $imgfiles = glob(DIR_IMAGE . 'cache/*');
+              foreach($imgfiles as $imgfile){
+                     $this->deldir($imgfile);
+		}
+		
+		}
+        public function deldir($dirname){         
+		if(file_exists($dirname)) {
+			if(is_dir($dirname)){
+                            $dir=opendir($dirname);
+                            while($filename=readdir($dir)){
+                                    if($filename!="." && $filename!=".."){
+                                        $file=$dirname."/".$filename;
+					$this->deldir($file); 
+                                    }
+                                }
+                            closedir($dir);  
+                            rmdir($dirname);
+                        }
+			else {@unlink($dirname);}			
+		}
+		}
+private function validateUpdateOrder(){
+		/*if (!$this->user->hasPermission('modify', 'catalog/category')) {
+      		$this->error['warning'] = $this->language->get('error_permission');  
+    	}*/
+		
+		if (!$this->error) {
+	  		return true;
+		} else {
+	  		return false;
+		}
+	}]]></add>
+		</operation>
+	<operation>
+			<search position="after"><![CDATA[$this->data['button_delete'] = $this->language->get('button_delete');]]></search>
+			<add><![CDATA[
+				$this->data['token'] = $this->session->data['token'];
+			]]></add>
+		</operation>
+		
+	</file>
+	<file name="admin/view/template/catalog/category_list.tpl">
+		<operation>
+			<search position="before"><![CDATA[<table class="list">]]></search>
+			<add><![CDATA[<div id="response" class="success"> </div>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<table class="list">]]></search>
+			<add><![CDATA[<table class="list" id="list">]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			<td style="text-align: center;"><?php if ($category['selected']) { ?>
+			]]></search>
+			<add><![CDATA[
+            <tr id="arrayorder_<?php echo $category['category_id'] ?>">
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[<script type="text/javascript">
+$(document).ready(function(){ 	
+	  function slideout(){
+  setTimeout(function(){
+  $("#response").slideUp("slow", function () {
+      });
+    
+}, 2000);}
+	
+    $("#response").hide();
+	$(function() {
+	$("#list tbody").sortable({ opacity: 0.8, cursor: 'move', update: function() {
+			
+			var order = $(this).sortable("serialize") + '&update=update'; 
+			$.post("index.php?route=catalog/category/updateOrder&token=<?php echo $token; ?>", order, function(theResponse){
+				$("#response").html(theResponse);
+				$("#response").slideDown('slow');
+				//slideout();
+			});
+		}								  
+		});
+	});
+
+});	
+</script>]]></add>
+		</operation>
+	</file>
+</modification>

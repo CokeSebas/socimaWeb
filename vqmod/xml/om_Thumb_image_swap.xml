@@ -1,0 +1,50 @@
+<modification>
+	<id>Product Thumb İmage Swap</id>
+	<version>0.2</version>
+	<vqmver>2.X</vqmver>
+	<author>Nagant</author>
+
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="after"><![CDATA['popup' => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height')),]]></search>
+			<add><![CDATA[// BOF om_Thumb_image_swap.xml
+'addthumb' => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height')),
+// EOF om_Thumb_image_swap.xml]]></add>
+		</operation>
+	</file>
+
+	<file name="catalog/view/theme/default/template/product/product.tpl">
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[<!-- BOF om_Thumb_image_swap.xml -->
+<?php if ($images) { ?>
+<script type="text/javascript"><!--
+$(function(){
+	var imgs = <?php echo json_encode($images); ?>;
+	var html = '';
+	$.each(imgs,function(i,image){
+		html += '<div class="image" style="display:none;"><a href="' + image.popup + '" title="<?php echo $heading_title; ?>" class="colorbox">';
+		html += '<img src="' + image.addthumb + '" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a></div>';
+		$('.image-additional').before(html);
+		html = '';
+	})
+	html = '<a href="<?php echo $popup; ?>" title="<?php echo $heading_title; ?>">';
+	html += '<img src="<?php echo $thumb; ?>" width="<?php echo $this->config->get('config_image_additional_width'); ?>" height="<?php echo $this->config->get('config_image_additional_height'); ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a>';
+	$('.image-additional').prepend(html);
+	var images = $('div.left .image');
+	var thumbs = $('.image-additional a');
+	thumbs.removeClass('cboxElement').removeClass('colorbox');
+	images.children('a').colorbox({rel:'colorbox'});
+	thumbs.on('click',function(e){
+		e.preventDefault();
+		images.hide();
+		images.eq(thumbs.index(this)).show();
+	});
+});
+//--></script>
+<!-- EOF om_Thumb_image_swap.xml -->
+<?php } ?>]]></add>
+		</operation>
+	</file>
+
+</modification>

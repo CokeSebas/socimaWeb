@@ -1,0 +1,161 @@
+<modification>
+	<id><![CDATA[Product Sorting]]></id>
+	<version><![CDATA[1.0]]></version>
+	<file name="admin/model/catalog/product.php">
+		<operation>
+			<search position="before"><![CDATA[public function getTotalProductsByLayoutId($layout_id) {]]></search>
+			<add><![CDATA[
+			public function updateOrder($array){
+				$count = 1;
+				foreach ($array as $idval) {
+					$query = "UPDATE " . DB_PREFIX . "product SET sort_order = " . $count . " WHERE product_id = " . $idval;
+					$this->db->query($query);
+					$count ++;	
+				}
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/catalog/product.php">
+		<operation>
+			<search position="before"><![CDATA[public function autocomplete() {]]></search>
+			<add><![CDATA[public function updateOrder(){
+		$this->load->language('catalog/product');
+
+    	$this->document->setTitle($this->language->get('heading_title'));
+		
+		$this->load->model('catalog/product');
+		if(isset($this->request->post['update']) && isset($this->request->post['arrayorder']) && $this->validateUpdateOrder()){
+			$this->model_catalog_product->updateOrder($this->request->post['arrayorder']);
+			$this->clearcache();
+			//echo 'Order Changed Sucessfully click <a href="'.$this->url->link('catalog/product', 'token=' . $this->session->data['token'], 'SSL').'">here</a> to refresh the page.';
+			echo '<a target="_blank" href="http://socimagestion.com/Movil/Sistema.php">Recuerde actualizar los datos para el sistema Movil</a>';
+		}
+		else
+			echo 'You do not have permission to update';
+		
+	}
+	public function clearcache() {
+		$this->load->language('tool/error_log');
+		$files = glob(DIR_CACHE . 'cache.*');
+		foreach($files as $file){
+			$this->deldir($file);
+		}
+                $imgfiles = glob(DIR_IMAGE . 'cache/*');
+              foreach($imgfiles as $imgfile){
+                     $this->deldir($imgfile);
+		}
+		
+		}
+        public function deldir($dirname){         
+		if(file_exists($dirname)) {
+			if(is_dir($dirname)){
+                            $dir=opendir($dirname);
+                            while($filename=readdir($dir)){
+                                    if($filename!="." && $filename!=".."){
+                                        $file=$dirname."/".$filename;
+					$this->deldir($file); 
+                                    }
+                                }
+                            closedir($dir);  
+                            rmdir($dirname);
+                        }
+			else {@unlink($dirname);}			
+		}
+		}
+private function validateUpdateOrder(){
+		if (!$this->user->hasPermission('modify', 'catalog/product')) {
+      		$this->error['warning'] = $this->language->get('error_permission');  
+    	}
+		
+		if (!$this->error) {
+	  		return true;
+		} else {
+	  		return false;
+		}
+	}]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA['price'      => $result['price'],]]></search>
+			<add><![CDATA['sort_order' => $result['sort_order'],]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$this->data['column_action'] = $this->language->get('column_action');]]></search>
+			<add><![CDATA[$this->data['column_sort_order'] = $this->language->get('column_sort_order');]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$this->data['sort_status'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=p.status' . $url, 'SSL');]]></search>
+			<add><![CDATA[$this->data['sort_order'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=p.sort_order' . $url, 'SSL');]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$this->data['entry_required'] = $this->language->get('entry_required');]]></search>
+			<add><![CDATA[$this->data['entry_sort_order'] = $this->language->get('entry_sort_order');]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[if (isset($this->request->post['subtract'])) {]]></search>
+			<add><![CDATA[if (isset($this->request->post['sort_order'])) {
+      		$this->data['sort_order'] = $this->request->post['sort_order'];
+    	} elseif (!empty($product_info)) {
+      		$this->data['sort_order'] = $product_info['sort_order'];
+    	} else {
+			$this->data['sort_order'] = 1;
+		}]]></add>
+		</operation>
+	</file>
+	<file name="admin/language/english/catalog/product.php">
+		<operation>
+			<search position="after"><![CDATA[$_['column_action']          = 'Action';]]></search>
+			<add><![CDATA[$_['column_sort_order']      = 'Sort Order';]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$_['entry_status']           = 'Status:';]]></search>
+			<add><![CDATA[$_['entry_sort_order']       = 'Sort Order:';]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/catalog/product_list.tpl">
+		<operation>
+			<search position="before"><![CDATA[<table class="list">]]></search>
+			<add><![CDATA[<div id="response" class="success"> </div>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<table class="list">]]></search>
+			<add><![CDATA[<table class="list" id="list">]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			<td style="text-align: center;"><?php if ($product['selected']) { ?>
+			]]></search>
+			<add><![CDATA[
+            <tr id="arrayorder_<?php echo $product['product_id'] ?>">
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<script type="text/javascript">]]></search>
+			<add><![CDATA[<script type="text/javascript">
+$(document).ready(function(){ 	
+	  function slideout(){
+  setTimeout(function(){
+  $("#response").slideUp("slow", function () {
+      });
+    
+}, 2000);}
+	
+    $("#response").hide();
+	$(function() {
+	$("#list tbody").sortable({ opacity: 0.8, cursor: 'move', update: function() {
+			
+			var order = $(this).sortable("serialize") + '&update=update'; 
+			$.post("index.php?route=catalog/product/updateOrder&token=<?php echo $token; ?>", order, function(theResponse){
+				$("#response").html(theResponse);
+				$("#response").slideDown('slow');
+				slideout();
+			});
+		}								  
+		});
+	});
+
+});	
+</script>]]></add>
+		</operation>
+	</file>
+</modification>

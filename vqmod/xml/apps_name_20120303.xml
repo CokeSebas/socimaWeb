@@ -1,0 +1,203 @@
+<modification>
+    <id>Apps Name - Coded by waabay.com</id>
+    <version>1.0.0</version>
+    <vqmver>2.1.5</vqmver>
+    <author>waabay</author>
+	<email>waabay@gmail.com</email>
+	<website>http://www.waabay.com</website>
+	
+	<file name="catalog/controller/module/bestseller.php">
+		<operation error="skip">
+			<search position="after" offset="1"><![CDATA[
+			$rating = false;
+			]]></search>
+			<add><![CDATA[
+			if ($this->config->get('appsname_status')) {
+				if (strlen($result['name']) > $this->config->get('apps_fbl_name_limit')) {
+					$apple_name = substr(strip_tags($result['name']),0,$this->config->get('apps_fbl_name_limit')) . " ...";
+				} else {
+					$apple_name = $result['name'];
+				}
+			} else {
+				$apple_name = $result['name'];
+			}
+			]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			'price'   	 => $price,
+			]]></search>
+			<add><![CDATA[
+			'apple_name' => $apple_name,
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/module/featured.php">
+		<operation error="skip">
+			<search position="after" offset="1"><![CDATA[
+			$rating = false;
+			]]></search>
+			<add><![CDATA[
+			if ($this->config->get('appsname_status')) {
+				if (strlen($product_info['name']) > $this->config->get('apps_fbl_name_limit')) {
+					$apple_name = substr(strip_tags($product_info['name']),0,$this->config->get('apps_fbl_name_limit')) . " ...";
+				} else {
+					$apple_name = $product_info['name'];
+				}
+			} else {
+				$apple_name = $product_info['name'];
+			}
+			]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			'price'   	 => $price,
+			]]></search>
+			<add><![CDATA[
+			'apple_name' => $apple_name,
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/module/latest.php">
+		<operation error="skip">
+			<search position="after" offset="1"><![CDATA[
+			$rating = false;
+			]]></search>
+			<add><![CDATA[
+			if ($this->config->get('appsname_status')) {
+				if (strlen($result['name']) > $this->config->get('apps_fbl_name_limit')) {
+					$apple_name = substr(strip_tags($result['name']),0,$this->config->get('apps_fbl_name_limit')) . " ...";
+				} else {
+					$apple_name = $result['name'];
+				}
+			} else {
+				$apple_name = $result['name'];
+			}
+			]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			'price'   	 => $price,
+			]]></search>
+			<add><![CDATA[
+			'apple_name' => $apple_name,
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/product/category.php">
+		<operation error="skip">
+			<search position="after" offset="1"><![CDATA[
+			$rating = false;
+			]]></search>
+			<add><![CDATA[
+			if ($this->config->get('appsname_status')) {
+				if (strlen($result['name']) > $this->config->get('apps_cat_limit')) {
+					$apple_name = substr(strip_tags($result['name']),0,$this->config->get('apps_cat_limit')) . " ...";
+				} else {
+					$apple_name = $result['name'];
+				}
+			} else {
+				$apple_name = $result['name'];
+			}
+			]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			'price'       => $price,
+			]]></search>
+			<add><![CDATA[
+			'apple_name' => $apple_name,
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/product/search.php">
+		<operation error="skip">
+			<search position="after" offset="1"><![CDATA[
+			$rating = false;
+			]]></search>
+			<add><![CDATA[
+			if ($this->config->get('appsname_status')) {
+				if (strlen($result['name']) > $this->config->get('apps_cat_limit')) {
+					$apple_name = substr(strip_tags($result['name']),0,$this->config->get('apps_cat_limit')) . " ...";
+				} else {
+					$apple_name = $result['name'];
+				}
+			} else {
+				$apple_name = $result['name'];
+			}
+			]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			'price'       => $price,
+			]]></search>
+			<add><![CDATA[
+			'apple_name' => $apple_name,
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/module/bestseller.tpl">
+		<operation error="skip">
+			<search position="replace"><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></div>
+			]]></search>
+			<add><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['apple_name']; ?></a></div>
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/module/featured.tpl">
+		<operation error="skip">
+			<search position="replace"><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></div>
+			]]></search>
+			<add><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['apple_name']; ?></a></div>
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/module/latest.tpl">
+		<operation error="skip">
+			<search position="replace"><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></div>
+			]]></search>
+			<add><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['apple_name']; ?></a></div>
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/product/category.tpl">
+		<operation error="skip">
+			<search position="replace"><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></div>
+			]]></search>
+			<add><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['apple_name']; ?></a></div>
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/product/search.tpl">
+		<operation error="skip">
+			<search position="replace"><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></div>
+			]]></search>
+			<add><![CDATA[
+			<div class="name"><a href="<?php echo $product['href']; ?>"><?php echo $product['apple_name']; ?></a></div>
+			]]></add>
+		</operation>
+	</file>
+</modification>

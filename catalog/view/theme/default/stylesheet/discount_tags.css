@@ -1,0 +1,71 @@
+/*Discount Tags*/
+
+/*Here you can change the position of the stock tag*/
+.product-list .stock_tag, .product-grid .stock_tag{
+	left: 0px;
+	top: 0px;
+}
+.box-product .stock_tag {
+	left: 0px;
+	top: 0px;
+}
+.product-info .stock_tag {
+	left: 0px;
+	top: 0px;
+}
+
+/*Here you can change the position of the discount tag*/
+.product-info .discount_tag{
+	top: 0px;
+	right: 0px;
+}
+.box-product .discount_tag{
+	top: 0px;
+	right: 0px;
+}
+.product-list .discount_tag,.product-grid .discount_tag{
+	top: 0px;
+	right: 0px;
+}
+
+/*Here set font, size..*/
+.stock_tag strong {
+	font-size: 12px;
+	text-align: center;
+	top: 4px;
+	color: #fff;
+}
+.discount_tag strong {	
+	font-size: 16px;
+	text-align: center;
+	top: 16px;
+	color: #fff;
+	/* Uncomment this for (45 degree) rotated discount text - WARNING: in MS Internet explorer 9 the last line creates black boxes, version 8,10,11 are working
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg); 
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678,sizingMethod='auto expand');*/
+}
+
+/*Removing text underline*/
+.image a,.discount_tag strong,.stock_tag strong,.stock_tag a,.discount_tag a{
+	text-decoration: none;
+}
+
+/*Don't change this part!*/
+.product-grid > div,.box-product > div {
+	width: auto;
+}
+.image {
+	position: relative;
+}
+.discount_tag,.stock_tag,.discount_tag strong,.stock_tag strong {
+	position: absolute;
+}
+.product-info .image strong{
+	right: 0px;
+	left: 0px;
+}
+

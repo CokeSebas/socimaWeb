@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+
+	<id>SKU no ADMIN</id>
+	<version>1.0.0</version>
+	<vqmver>2.1.5</vqmver>
+	<author>FIXtheMAD</author>
+	
+	
+	<file name="admin/controller/sale/order.php">
+		<operation>
+			<search position="before" ><![CDATA[$this->data['products'][] = array(]]></search>
+			<add><![CDATA[
+				// Captura SKU
+				$this->load->model('catalog/product');
+				$this->model_catalog_product->getProduct($product['product_id']);
+				$CurrSku = $this->model_catalog_product->getProduct($product['product_id']);
+			]]></add>
+		</operation>		
+	</file>
+	
+		<file name="admin/controller/sale/order.php">
+		<operation>
+			<search position="after" index="1" ><![CDATA['model'    		   => $product['model'],]]></search>
+			<add><![CDATA[
+			'sku'    		   => $CurrSku['sku'],
+			]]></add>
+		</operation>		
+	</file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation>
+			<search position="after"  ><![CDATA[<td class="left"><?php echo $column_model; ?></td>]]></search>
+			<add><![CDATA[<td class="left"><?php echo 'SKU'; ?></td>]]></add>
+		</operation>		
+	</file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation>
+			<search position="after"  ><![CDATA[<td class="left"><?php echo $product['model']; ?></td>]]></search>
+			<add><![CDATA[<td class="left"><?php echo $product['sku']; ?></td>]]></add>
+		</operation>		
+	</file>
+		
+  
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation>
+			<search position="replace" ><![CDATA[<td colspan="4" class="right"><?php echo $totals['title']; ?>:</td>]]></search>
+			<add><![CDATA[<td colspan="5" class="right"><?php echo $totals['title']; ?>:</td>]]></add>
+		</operation>		
+	</file>
+	
+	
+
+</modification>
+
+
+

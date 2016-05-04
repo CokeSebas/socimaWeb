@@ -1,0 +1,11 @@
+clientes ingresados Rut => 
+clientes ingresados Rut => 2229663,"9","JELVEZ JELVEZ, MARIO GUSTAVO","FAC",63471,1,20150806,20151005,46815,51365,3500000
+clientes ingresados Rut => 3687617
+clientes ingresados Rut => 2229663
+clientes ingresados Rut => 3658876
+clientes ingresados Rut => 
+clientes ingresados Rut => 22296639
+clientes ingresados Rut => 40650598
+clientes ingresados Rut => 2994043-6
+clientes ingresados Rut => 10641094-1
+clientes ingresados Rut => 3218339-5

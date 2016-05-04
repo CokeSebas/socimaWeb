@@ -1,0 +1,112 @@
+<modification>
+	<id>Sales Rep for OC 1.5.4.x - English language pack</id>
+	<version>1.4.1</version>
+	<vqmver>2.1.7</vqmver>
+	<author>madimar</author>
+
+<!-- ADMIN  -->
+	<file name="admin/language/english/common/header.php">
+		<operation>
+            <search position="after"><![CDATA[
+$_['text_customer_group']
+            ]]></search>
+            <add><![CDATA[
+$_['text_salesrep']    = 'Sales Representatives';
+// v1.3
+$_['text_report_sale_salesrep']    = 'Sales Representatives';
+            ]]></add>
+        </operation>
+	</file>
+
+	<file name="admin/language/english/sale/customer.php">
+
+		<operation>
+            <search position="after"><![CDATA[
+$_['column_customer_group']
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+	$_['column_salesrep']   = 'Sales Rep';
+// madimar mod end
+            ]]></add>
+        </operation>	
+	
+		<operation>
+            <search position="after"><![CDATA[
+$_['entry_zone']
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['text_none']        = '--- None ---';
+$_['entry_salesrep']        = 'Sales Representative:';
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>
+	
+	<file name="admin/language/english/sale/order.php">
+		<operation>
+            <search position="before"><![CDATA[
+?>
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['entry_salesrep']        = 'Sales Representative:';
+$_['button_save']        = 'Save';
+$_['column_salesrep']   = 'Sales Rep';
+// madimar mod fine
+            ]]></add>
+        </operation>
+	</file>	
+	
+	<file name="catalog/language/english/account/register.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+?>
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['entry_your_salesrep']        = 'Please select your Sales Representative (if any):';	
+$_['text_your_salesrep']        = 'Your Sales Representative:';
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>	
+
+	<file name="catalog/language/english/checkout/checkout.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+?>
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['entry_your_salesrep']        = 'Please select your Sales Representative (if any):';	
+$_['text_your_salesrep']        = 'Your Sales Representative:';
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>		
+
+	<file name="admin/language/english/sale/contact.php">
+		<operation>
+            <search position="before"><![CDATA[
+?>
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+$_['text_customer_mine']    = 'My Customers';
+$_['text_salesrep']    = 'Sales Representative';
+$_['text_salesrep_all']    = 'All Sales Representatives';
+$_['entry_salesrep']    = 'Sales Representative Name:';
+			// madimar mod end
+            ]]></add>
+        </operation>
+	
+	</file>		
+		
+</modification>

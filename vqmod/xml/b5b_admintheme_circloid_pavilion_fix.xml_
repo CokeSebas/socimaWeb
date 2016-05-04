@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<modification>
+    <id>Base5Builder - Admin Theme Circloid - User Code</id>
+    <vqmver>2.0</vqmver>
+    <author>Base5Builder.com - support@base5builder.com</author>
+    <file name="admin/view/template/admin_theme/base5builder_circloid/common/header.tpl">
+        <operation error="log">
+            <search position="replace" offset="2"><![CDATA[
+                <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/jquery.1.7.2.js"></script>
+                ]]></search>
+            <add><![CDATA[
+                <?php
+                if(isset($this->request->get['route'])){
+                    if($this->request->get['route'] == "module/pavilion"){
+                        ?>
+                        <?php
+                    }else{
+                        ?>
+                      <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/jquery.1.7.2.js"></script>
+                      <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/ui/jquery-ui-1.8.20.custom.min.js"></script>
+                      <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/misc/tabs.js"></script>
+                        <?php
+                    }
+                }else{
+                        ?>
+                      <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/jquery.1.7.2.js"></script>
+                      <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/ui/jquery-ui-1.8.20.custom.min.js"></script>
+                      <script type="text/javascript" src="view/javascript/admin_theme/base5builder_circloid/misc/tabs.js"></script>
+                        <?php
+                }
+                ?>
+                ]]></add>
+        </operation>
+        <operation error="ignore">
+            <search position="before"><![CDATA[
+                </head>
+                ]]></search>
+            <add><![CDATA[
+                    <?php
+                    if(isset($this->request->get['route'])){
+                        if($this->request->get['route'] == "module/pavilion"){
+                            ?>
+                                <style type="text/css">
+                                    ul.mainnav > li > ul{
+                                        z-index:999;
+                                    }
+                                    .header .admin-info img{
+                                        display: inline-block;
+                                    }
+                                </style>
+                            <?php
+                        }
+                    }
+                    ?>
+                ]]></add>
+        </operation>
+    </file>
+</modification>

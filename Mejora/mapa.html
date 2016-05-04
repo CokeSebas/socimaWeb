@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset= UTF-8"/>
+	<title>Mapas Clientes</title>
+	
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<link href='http://fonts.googleapis.com/css?family=Marcellus' rel='stylesheet' type='text/css'>	
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+	<style>
+	
+	* { margin: 0; padding: 0; }
+	html { height: 100%; }
+	body { background-image: url(images/old_map.png); font-size: 16px; font-family: 'Marcellus', serif; height: 100%; position: relative; }
+	header { background-color: rgba(0,0,0,.88); height: 80px; width: 100%; position: fixed; z-index: 99; box-shadow: 0px 2px 3px #333333; }
+	header > h1 { color: #FFFFFF; font-family: 'Marcellus', serif; font-size: 1.2em; font-weight: normal; margin: 30px 60px; }
+	
+	#mapa { position: absolute; background: transparent; height: 100%; width: 100%; top: 0; left: 0; right: 0; bottom: 0; }
+	#informacion { position: absolute; background: rgba(0,16,27,.85); z-index: 200; top: 70%; width: 30%; padding: 12px; }
+	
+	#informacion h2,
+	#informacion h3 { color: #FFFFFF; text-shadow: 1px 1px 1px #000000; font-weight: normal; font-size: .9em; }
+	
+	#informacion h2 { font-size: 1.1em; margin-bottom: 10px; }
+	
+	#informacion h3 span { color: #FF5555; }
+	
+	</style>
+    <div id="capa-mapa" style="height:918px"></div>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js"></script>
+
+    <script type="text/javascript">
+
+
+var misPuntos = [
+    ["Viña", "-33.0263054", "-71.5517021",],
+    ["Hospital","-33.029698","-71.5400067",],
+    ["Chorrillos","-33.0332781","-71.5331216",],
+    ["ElSalto","-33.0411865","-71.5210619",],
+    ["Santa Isabel", "-33.0264022","-71.5558081",],
+    ["Hiper Lider","-33.0438669","-71.4114882"],
+    ["Chilexpress","-33.0441763","-71.3693808"],
+    ["Ñuñoa, Santiago","-33.4543776","-70.6011552"],
+];
+function informacion (coordenadas) {
+    $("#latitude").html(coordenadas.Lat);
+    $("#longitude").html(coordenadas.Lng);
+}
+
+function inicializaGoogleMaps() {
+
+    var Lat = -33.0292061;
+    var Lng = -71.515529;
+
+
+    var mapOptions = {
+        zoom: 10,
+        center: new google.maps.LatLng(Lat, Lng),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+
+    var map = new google.maps.Map(document.getElementById("capa-mapa"), mapOptions);
+    setGoogleMarkers(map, misPuntos);
+}
+
+var markers = Array();
+var infowindowActivo = false;
+function setGoogleMarkers(map, locations) {
+ 
+
+    for(var i=0; i<locations.length; i++) {
+        var elPunto = locations[i];
+        var myLatLng = new google.maps.LatLng(elPunto[1], elPunto[2]);
+
+        markers[i]=new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+//            icon: eval(elPunto[3]),
+            title: elPunto[0]
+        });
+        markers[i].infoWindow = new google.maps.InfoWindow({
+            content: 'Aquí esta'+elPunto[0]
+        });
+        google.maps.event.addListener(markers[i], 'click', function(){      
+            if(infowindowActivo)
+                infowindowActivo.close();
+            infowindowActivo = this.infoWindow;
+            infowindowActivo.open(map, this);
+       });
+    }
+}
+
+inicializaGoogleMaps();
+
+</script>
+</head>
+<body>
+	<header>
+
+	</header>
+	<div id="informacion">
+
+		<h2>Dirección de clientes</h2>
+		
+	</div>
+
+</body>
+</html>

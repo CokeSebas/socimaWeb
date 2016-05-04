@@ -1,0 +1,2216 @@
+<modification>
+	<id>Sales Rep module for OC 1.5.6.1</id>
+	<version>1.7.0</version>
+<!-- Version History
+1.7.1
+- improved general template compatibility
+- fix bug in customer account edit - catalog
+
+1.7.0
+- improved security in sales rep backend
+- improved referral system for sales reps
+-->	
+	<vqmver>2.4.1</vqmver>
+	<author>madimar - info@opencartzoom.com</author>
+
+<!-- ADMIN  -->
+
+<!-- Admin menu bar -->
+
+	<file name="admin/view/template/common/header.tpl">
+		<operation>
+            <search position="before"><![CDATA[
+          <li><a href="<?php echo $affiliate; ?>"><?php echo $text_affiliate; ?></a></li>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod -->
+		  <li><a href="<?php echo $salesrep; ?>"><?php echo $text_salesrep; ?></a></li>
+<!-- madimar mod end-->
+		]]></add>
+		</operation>
+
+<!-- v1.3 -->		
+		<operation>
+            <search position="before"><![CDATA[
+              <li><a href="<?php echo $report_sale_order; ?>"><?php echo $text_report_sale_order; ?></a></li>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod -->
+              <li><a href="<?php echo $report_sale_salesrep; ?>"><?php echo $text_report_sale_salesrep; ?></a></li>
+<!-- madimar mod end-->
+		]]></add>
+		</operation>
+		
+	</file>
+	
+	<file name="admin/controller/common/header.php">
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['text_customer_group'] = $this->language->get('text_customer_group');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+		$this->data['text_salesrep'] = $this->language->get('text_salesrep');
+// v1.3		
+		$this->data['text_report_sale_salesrep'] = $this->language->get('text_report_sale_salesrep');
+// madimar mod end
+		]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+			$this->data['customer_group'] = $this->url->link('sale/customer_group', 'token=' . $this->session->data['token'], 'SSL');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+			$this->data['salesrep'] = $this->url->link('sale/salesrep', 'token=' . $this->session->data['token'], 'SSL');
+// v1.3
+			$this->data['report_sale_salesrep'] = $this->url->link('report/sale_salesrep', 'token=' . $this->session->data['token'], 'SSL');	
+// madimar mod end
+		]]></add>
+        </operation>		
+	</file>
+
+<!-- ADMIN SALE CUSTOMER -->
+
+	<file name="admin/controller/sale/customer.php">
+<!-- add new filter begin-->	
+		<operation>
+            <search position="before" index="1,2,3,4,6,7,8,9"><![CDATA[
+			if (isset($this->request->get['filter_status'])) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			if (isset($this->request->get['filter_salesrep_id'])) {
+				$url .= '&filter_salesrep_id=' . $this->request->get['filter_salesrep_id'];
+				
+			}
+// madimar mod end
+            ]]></add>
+        </operation>					
+		
+		<operation>
+            <search position="after" offset="2"><![CDATA[
+			$filter_customer_group_id = null;
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		if (isset($this->request->get['filter_salesrep_id'])) {
+			$filter_salesrep_id = $this->request->get['filter_salesrep_id'];
+		} else {
+			$filter_salesrep_id = null;
+		}
+// madimar mod end
+            ]]></add>
+        </operation>		
+		
+		<operation>
+            <search position="after"><![CDATA[
+			'filter_customer_group_id' => $filter_customer_group_id, 
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			'filter_salesrep_id' => $filter_salesrep_id, 
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="after"><![CDATA[
+				'customer_group' => $result['customer_group'],
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+				//'salesrep' => $result['salesrep'],
+// madimar mod end
+            ]]></add>
+        </operation>	
+
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['column_customer_group'] = $this->language->get('column_customer_group');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['column_salesrep'] = $this->language->get('column_salesrep');
+// madimar mod end
+            ]]></add>
+        </operation>			
+
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['sort_customer_group'] = $this->url->link('sale/customer', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, 'SSL');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['sort_salesrep'] = $this->url->link('sale/customer', 'token=' . $this->session->data['token'] . '&sort=salesrep' . $url, 'SSL');
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['filter_customer_group_id'] = $filter_customer_group_id;
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['filter_salesrep_id'] = $filter_salesrep_id;
+// madimar mod end
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before"><![CDATA[
+		$this->load->model('sale/customer_group');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->load->model('sale/salesrep');
+		
+		$this->data['salesreps'] = $this->model_sale_salesrep->getSalesReps();
+// madimar mod end
+            ]]></add>
+        </operation>		
+		
+<!-- add new filter end-->
+		
+		<operation>
+            <search position="after"><![CDATA[
+    	$this->data['entry_zone'] = $this->language->get('entry_zone');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+    	$this->data['entry_salesrep'] = $this->language->get('entry_salesrep');
+		$this->data['text_none'] = $this->language->get('text_none');
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="before"><![CDATA[
+    	if (isset($this->request->post['status'])) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+		$this->load->model('sale/salesrep');
+
+		$data = array(
+			'filter_status'            => 1 
+			);			
+		
+		$this->data['salesreps'] = $this->model_sale_salesrep->getSalesReps($data);
+
+    	if (isset($this->request->post['salesrep_id'])) {
+      		$this->data['salesrep_id'] = $this->request->post['salesrep_id'];
+    	} elseif (isset($customer_info)) { 
+			$this->data['salesrep_id'] = $customer_info['salesrep_id'];
+		} else {
+      		$this->data['salesrep_id'] = '0';
+    	}				
+// madimar mod end  
+		]]></add>
+        </operation>
+				
+	</file>
+
+	<file name="admin/view/template/sale/customer_form.tpl">
+		<operation>
+            <search position="replace" ><![CDATA[
+              <td><?php echo $entry_status; ?></td>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td><?php echo $entry_salesrep; ?></td>
+            <td><select name="salesrep_id">
+<!--                <?php if ($salesrep_id == "0") { ?>
+					<option value="0" selected="selected"><?php echo $text_none; ?></option>
+                <?php } else { ?>
+					<option value="0"><?php echo $text_none; ?></option>
+                <?php } ?>	
+-->				
+                <?php foreach ($salesreps as $salesrep) { ?>
+                <?php if ($salesrep['salesrep_id'] == $salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+                <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+                <?php } ?>
+                <?php } ?>
+              </select></td>
+          </tr>
+            <tr>
+              <td><?php echo $entry_status; ?></td>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>
+				
+	</file>
+
+	<file name="admin/view/template/sale/customer_list.tpl">
+		<operation>
+            <search position="before" ><![CDATA[
+            <td class="left"><?php if ($sort == 'c.status') { ?>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td class="left"><?php if ($sort == 'salesrep') { ?>
+              <a href="<?php echo $sort_salesrep; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_salesrep; ?></a>
+              <?php } else { ?>
+              <a href="<?php echo $sort_salesrep; ?>"><?php echo "Vendedor Asociado"; ?></a>
+              <?php } ?></td> 
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" ><![CDATA[
+            <td><select name="filter_status">
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td><select name="filter_salesrep_id">
+                <option value="*"></option>
+                <?php foreach ($salesreps as $salesrep)
+                $_SESSION['Rep'] = $salesrep['salesrep_id']; { ?>
+                <?php if ($salesrep['salesrep_id'] == $filter_salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+                <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+                <?php } ?>
+                <?php } ?>
+              </select></td>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>			
+		
+		<operation>
+            <search position="after" ><![CDATA[
+            <td class="left"><?php echo $customer['customer_group']; ?></td>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td class="left"><?php echo $customer['salesrep']; ?></td>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before" ><![CDATA[
+	var filter_status = $('select[name=\'filter_status\']').attr('value');
+            ]]></search>
+            <add><![CDATA[
+
+	var filter_salesrep_id = $('select[name=\'filter_salesrep_id\']').attr('value');
+	
+	if (filter_salesrep_id != '*') {
+		url += '&filter_salesrep_id=' + encodeURIComponent(filter_salesrep_id);
+	}	
+            ]]></add>
+        </operation>		
+<!-- 1.5.2.1 change -->
+		<operation>
+            <search position="replace" ><![CDATA[
+              <td class="center" colspan="10"><?php echo $text_no_results; ?></td>	
+            ]]></search>
+            <add><![CDATA[
+              <td class="center" colspan="11"><?php echo $text_no_results; ?></td>
+            ]]></add>
+        </operation>			
+	
+	</file>
+
+	<file name="admin/model/sale/customer.php">
+		<operation>
+            <search position="after"><![CDATA[
+      	$customer_id = $this->db->getLastId();
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET salesrep_id = '" . (int)$data['salesrep_id'] . "' WHERE customer_id = '" . (int)$customer_id . "'");		
+		// madimar mod end
+			]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', newsletter = '" . (int)$data['newsletter'] . "', customer_group_id = '" . (int)$data['customer_group_id'] . "', status = '" . (int)$data['status'] . "' WHERE customer_id = '" . (int)$customer_id . "'");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET salesrep_id = '" . (int)$data['salesrep_id'] . "' WHERE customer_id = '" . (int)$customer_id . "'");
+		// madimar mod end
+			]]></add>
+        </operation>	
+
+<!-- add new filter begin -->		
+
+		<operation>
+            <search position="after"><![CDATA[
+		$sql = "SELECT *, CONCAT(c.firstname, ' ', c.lastname) AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";		
+			]]></search>
+            <add><![CDATA[
+		// madimar mod		
+		$sql = str_replace ('*, ', '', $sql);		
+		$sql = str_replace (' FROM', ", c.customer_id AS customer_id, c.firstname AS firstname, c.lastname AS lastname, c.ip AS ip, c.email AS email, c.status AS status, c.telephone AS telephone, c.fax AS fax, c.approved AS approved, c.date_added AS date_added, c.customer_group_id AS customer_group_id,CONCAT(sr.salesrep_id, ' || ' , sr.name) AS salesrep, sr.name as nombre FROM", $sql);
+		$sql = str_replace (' LEFT JOIN ', " LEFT JOIN " . DB_PREFIX . "salesrep sr ON (c.salesrep_id = sr.salesrep_id) LEFT JOIN ", $sql);
+		// madimar mod end		
+			]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before" index="1"><![CDATA[
+		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if (isset($data['filter_salesrep_id']) && !is_null($data['filter_salesrep_id'])) {
+			$implode[] = "sr.salesrep_id = '" . $this->db->escape($data['filter_salesrep_id']) . "'";
+		}		
+		// madimar mod end
+			]]></add>
+        </operation>
+		
+		<operation>
+            <search position="after"><![CDATA[
+			'customer_group',
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+			'salesrep',
+			'nombre',
+		// madimar mod end
+			]]></add>
+        </operation>				
+		
+		<operation>
+            <search position="before" index="2"><![CDATA[
+		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if (isset($data['filter_salesrep_id']) && !is_null($data['filter_salesrep_id'])) {
+			$implode[] = "salesrep_id = '" . (int)$data['filter_salesrep_id'] . "'";
+		}
+		// madimar mod end
+			]]></add>
+        </operation>
+<!-- add new filter end -->		
+<!-- v1.3 -->
+		<operation>
+            <search position="before" index="1"><![CDATA[
+		if ($implode) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$implode[] = "c.salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}	
+		// madimar mod end
+			]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" index="2"><![CDATA[
+		if ($implode) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$implode[] = "salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}	
+		// madimar mod end
+			]]></add>
+        </operation>		
+<!-- v1.3 end -->
+
+		<!-- v1.7.0 -->
+		<operation>
+            <search position="before" offset="1"><![CDATA[
+		?>
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+	public function getSalesRepId($customer_id) {
+		$query = $this->db->query("SELECT salesrep_id FROM " . DB_PREFIX . "customer WHERE customer_id = '" . (int)$customer_id . "'");
+
+		return $query->row['salesrep_id'];
+	}	
+		// madimar mod end
+			]]></add>
+        </operation>
+
+	
+	</file>			
+	
+<!-- ORDER EDIT and FILTER -->	
+	
+	<file name="admin/controller/sale/order.php">
+
+		<operation>
+            <search position="after"><![CDATA[
+    	$this->data['column_customer'] = $this->language->get('column_customer');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['column_salesrep'] = $this->language->get('column_salesrep');
+// madimar mod end
+            ]]></add>
+        </operation>	
+		
+		<operation>
+            <search position="before"><![CDATA[
+			$this->data['invoice'] = $this->url->link('sale/order/invoice', 'token=' . $this->session->data['token'] . '&order_id=' . (int)$this->request->get['order_id'], 'SSL');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			$this->data['action'] = $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . (int)$this->request->get['order_id'], 'SSL');
+// madimar mod end
+            ]]></add>
+        </operation>		
+	
+		<operation>
+            <search position="before" index="4"><![CDATA[
+		if (isset($this->request->get['filter_order_status_id'])) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		if (isset($this->request->get['filter_salesrep_id'])) {
+			$filter_salesrep_id = $this->request->get['filter_salesrep_id'];
+		} else {
+			$filter_salesrep_id = null;
+		}
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before"><![CDATA[
+			'filter_order_status_id' => $filter_order_status_id,
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			'filter_salesrep_id' => $filter_salesrep_id,
+// madimar mod end
+            ]]></add>
+        </operation>	
+
+		<operation>
+            <search position="before" index="1"><![CDATA[
+				'status'        => $result['status'],
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+				'salesrep'     => $result['salesrep'],
+// madimar mod end
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before"><![CDATA[
+		$this->data['sort_status'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=status' . $url, 'SSL');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['sort_salesrep'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=salesrep' . $url, 'SSL');
+// madimar mod end
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before" index="1,2,3,5,6,7,8"><![CDATA[
+			if (isset($this->request->get['filter_order_status_id'])) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			if (isset($this->request->get['filter_salesrep_id'])) {
+				$url .= '&filter_salesrep_id=' . $this->request->get['filter_salesrep_id'];
+			}
+// madimar mod end
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="after" ><![CDATA[
+				$this->data['filter_order_status_id'] = $filter_order_status_id;
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+				$this->data['filter_salesrep_id'] = $filter_salesrep_id;
+// madimar mod end
+            ]]></add>
+        </operation>			
+		
+<!-- add new filter end-->
+
+<!-- v1.5.2.1 -->
+		<operation>
+            <search position="before"><![CDATA[
+		if (isset($this->request->post['affiliate_id'])) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		/*if (isset($this->request->post['salesrep_id'])) {
+			$this->data['salesrep_id'] = $this->request->post['salesrep_id'];
+		} elseif (!empty($order_info)) {
+			$this->data['salesrep_id'] = $order_info['salesrep_id'];
+		} else {
+			$this->data['salesrep_id'] = '';
+		}*/
+// madimar mod fine
+            ]]></add>
+        </operation>
+
+
+		<operation>
+            <search position="after"><![CDATA[
+			$this->data['entry_comment'] = $this->language->get('entry_comment');	
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['entry_salesrep'] = $this->language->get('entry_salesrep');
+// madimar mod fine
+            ]]></add>
+        </operation>			
+		
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['text_ship_to'] = $this->language->get('text_ship_to');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['text_salesrep_id'] = $this->language->get('text_salesrep_id');
+// madimar mod fine
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+		$this->load->model('sale/order');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->load->model('sale/salesrep');
+		$this->data['salesreps'] = $this->model_sale_salesrep->getSalesReps();	
+// madimar mod fine
+            ]]></add>
+        </operation>		
+	</file>
+
+<!-- v1.5.2.1 from order_info to order_form -->
+	
+	<file name="admin/view/template/sale/order_form.tpl">
+		<operation>
+            <search position="before" index="1"><![CDATA[
+          </table>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod -->
+		  <tr>
+            <td><?php echo $entry_salesrep; ?></td>
+            <td><select name="salesrep_id">
+                <?php foreach ($salesreps as $salesrep) { ?>
+                <?php if ($salesrep['salesrep_id'] == $salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+                <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+                <?php } ?>
+                <?php } ?>
+              </select></td>
+          </tr>		  
+<!-- madimar mod end -->					  
+            ]]></add>
+        </operation>
+	</file>
+
+	<file name="admin/view/template/sale/order_list.tpl">
+		<operation>
+            <search position="before" ><![CDATA[
+            <td class="left"><?php if ($sort == 'status') { ?>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td class="left"><?php if ($sort == 'salesrep') { ?>
+              <a href="<?php echo $sort_salesrep; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_salesrep; ?></a>
+              <?php } else { ?>
+              <a href="<?php echo $sort_salesrep; ?>"><?php echo $column_salesrep; ?></a>
+              <?php } ?></td> 
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" ><![CDATA[
+            <td><select name="filter_order_status_id">
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td><select name="filter_salesrep_id">
+                <option value="*"></option>
+                <?php foreach ($salesreps as $salesrep) { ?>
+                <?php if ($salesrep['salesrep_id'] == $filter_salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+                <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+                <?php } ?>
+                <?php } ?>
+              </select></td>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>			
+		
+		<operation>
+            <search position="before" ><![CDATA[
+            <td class="left"><?php echo $order['status']; ?></td>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod --> 
+            <td class="left"><?php echo $order['salesrep']; ?></td>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before" ><![CDATA[
+	var filter_order_status_id = $('select[name=\'filter_order_status_id\']').attr('value');
+            ]]></search>
+            <add><![CDATA[
+	var filter_salesrep_id = $('select[name=\'filter_salesrep_id\']').attr('value');
+	
+	if (filter_salesrep_id != '*') {
+		url += '&filter_salesrep_id=' + encodeURIComponent(filter_salesrep_id);
+	}	
+            ]]></add>
+        </operation>		
+		
+	</file>
+	
+	<file name="admin/model/sale/order.php">
+
+<!-- v1.5.2.1 added 2 operations -->
+	<operation>
+            <search position="after" index="1"><![CDATA[
+      	$order_id = $this->db->getLastId();	 
+		]]></search>
+            <add><![CDATA[
+		// madimar mod
+		$this->db->query("UPDATE `" . DB_PREFIX . "order` SET salesrep_id = '" . (isset($data['salesrep_id']) ? $this->db->escape($data['salesrep_id']) : 0) . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+		// madimar mod end
+			]]></add>
+    </operation>	
+
+	<operation>
+            <search position="before" index="1"><![CDATA[
+		$this->db->query("DELETE FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'"); 
+		]]></search>
+            <add><![CDATA[
+		// madimar mod
+		$this->db->query("UPDATE `" . DB_PREFIX . "order` SET salesrep_id = '" . (isset($data['salesrep_id']) ? $this->db->escape($data['salesrep_id']) : 0) . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+		// madimar mod end
+			]]></add>
+    </operation>		
+		
+	
+		
+<!-- add new filter begin -->		
+
+		<operation>
+            <search position="after"><![CDATA[
+		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS status, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified FROM `" . DB_PREFIX . "order` o";
+			]]></search>
+            <add><![CDATA[
+		// madimar mod	
+		$sql = str_replace (' FROM `', ', sr.name AS salesrep FROM `', $sql);
+		$sql .= " LEFT JOIN " . DB_PREFIX . "salesrep sr ON (o.salesrep_id = sr.salesrep_id) ";
+		// madimar mod end		
+			]]></add>
+        </operation>		
+		
+		<operation>
+            <search position="before" index="1"><![CDATA[
+		if (!empty($data['filter_date_added'])) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if (isset($data['filter_salesrep_id']) && !is_null($data['filter_salesrep_id'])) {
+			$sql .= " AND o.salesrep_id = '" . (int)$data['filter_salesrep_id'] . "'";
+		}
+		// madimar mod end
+			]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" index="2"><![CDATA[
+		if (!empty($data['filter_date_added'])) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if (isset($data['filter_salesrep_id']) && !is_null($data['filter_salesrep_id'])) {
+			$sql .= " AND salesrep_id = '" . (int)$data['filter_salesrep_id'] . "'";
+		}
+		// madimar mod end
+			]]></add>
+        </operation>		
+
+		<operation>
+            <search position="after"><![CDATA[
+			'customer',
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+			'salesrep',
+		// madimar mod end
+			]]></add>
+        </operation>		
+
+		<operation>
+            <search position="after"><![CDATA[
+				'customer_group_id'       => $order_query->row['customer_group_id'],
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+				'salesrep_id'       => $order_query->row['salesrep_id'],
+		// madimar mod end
+			]]></add>
+        </operation>			
+		
+<!-- v1.3 -->
+		<operation>
+            <search position="before" index="1"><![CDATA[
+		$sort_data = array(
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$sql .= " AND o.salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}	
+		// madimar mod end
+			]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" index="2"><![CDATA[
+		$query = $this->db->query($sql);
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$sql .= " AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}	
+		// madimar mod end
+			]]></add>
+        </operation>	
+
+		<operation>
+            <search position="after"><![CDATA[
+      	$query = $this->db->query("SELECT SUM(total) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0'");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+      	$query = $this->db->query("SELECT SUM(total) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'");
+		}	
+		// madimar mod end
+			]]></add>
+        </operation>			
+
+		<operation>
+            <search position="after"><![CDATA[
+      	$query = $this->db->query("SELECT SUM(total) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND YEAR(date_added) = '" . (int)$year . "'");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+      	$query = $this->db->query("SELECT SUM(total) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND YEAR(date_added) = '" . (int)$year . "' AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'");
+		}	
+		// madimar mod end
+			]]></add>
+        </operation>			
+		
+<!-- v1.3 end -->			
+		
+		<!-- end filter -->
+		
+		<!-- v1.7.0 -->
+		<operation>
+            <search position="before" offset="1"><![CDATA[
+		?>
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+	public function getSalesRepId($order_id) {
+		$query = $this->db->query("SELECT salesrep_id FROM " . DB_PREFIX . "order WHERE order_id = '" . (int)$order_id . "'");
+
+		return $query->row['salesrep_id'];
+	}	
+		// madimar mod end
+			]]></add>
+        </operation>		
+		
+		
+	</file>	
+	
+<!-- library mods -->	
+	
+	<file name="system/library/customer.php">
+		<operation>
+            <search position="after"><![CDATA[
+	private $customer_group_id;
+			]]></search>
+            <add><![CDATA[
+// madimar mod
+	private $salesrep_id;
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+				$this->customer_group_id = $customer_query->row['customer_group_id'];
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+				$this->salesrep_id = $customer_query->row['salesrep_id'];
+// madimar mod fine
+            ]]></add>
+        </operation>		
+		
+		<operation>
+            <search position="after"><![CDATA[
+		$this->customer_group_id = '';	
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->salesrep_id = '';	
+// madimar mod fine
+            ]]></add>
+        </operation>
+	
+		
+	<operation>
+            <search position="before"><![CDATA[
+  	public function getCustomerGroupId() {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+  	public function getSalesRepId() {
+		return $this->salesrep_id;	
+  	}
+// madimar mod fine
+            ]]></add>
+        </operation>
+	</file>	
+	
+<!-- assign sales rep to order in checkout confirm -->	
+	
+	<file name="catalog/controller/checkout/confirm.php">
+
+		<operation>
+            <search position="after"><![CDATA[
+		$data['fax'] = $this->customer->getFax();	
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$data['salesrep_id'] = $this->customer->getSalesRepId();	
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+				$data['fax'] = $this->session->data['guest']['fax'];
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+				$data['salesrep_id'] = $this->session->data['guest']['salesrep_id'];
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>
+
+	<file name="catalog/model/checkout/order.php">
+		<operation>
+            <search position="after"><![CDATA[
+		$order_id = $this->db->getLastId();
+			]]></search>
+        <add><![CDATA[
+			// madimar mod
+			$this->db->query("UPDATE `" . DB_PREFIX . "order` SET salesrep_id = '" . (isset($data['salesrep_id']) ? $this->db->escape($data['salesrep_id']) : 0) . "', " ."date_modified = NOW(), date_added = NOW() WHERE order_id = '" . (int)$order_id . "'");
+			// madimar mod fine
+		]]></add>
+        </operation>
+<!-- v1.2 -->
+
+		<operation>
+            <search position="before"><![CDATA[
+				'payment_method'          => $order_query->row['payment_method'],
+			]]></search>
+        <add><![CDATA[
+			// madimar mod
+				'salesrep_id'          => $order_query->row['salesrep_id'],
+			// madimar mod fine
+		]]></add>
+        </operation>		
+
+
+		<operation>
+            <search position="before"><![CDATA[
+			// Admin Alert Mail
+			]]></search>
+        <add><![CDATA[
+			// madimar mod
+				$this->load->model('account/salesrep');
+				$salesrep_info = $this->model_account_salesrep->getSalesRep($order_info['salesrep_id']);
+				$salesrep_email = $salesrep_info['email'];
+				$salesrep_alert = $salesrep_info['alert'];
+				$salesrep_additional_emails = $salesrep_info['additional_emails'];
+				
+				if ($salesrep_alert) {
+					$mail->setTo($salesrep_email);
+					$mail->send();
+				
+					$add_emails = explode(',', $salesrep_additional_emails);
+				
+						foreach ($add_emails as $add_email) {
+						if ($add_email && preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/i', $add_email)) {
+							$mail->setTo($add_email);
+							$mail->send();
+						}					
+					}
+				}
+			// madimar mod fine
+		]]></add>
+        </operation>		
+<!-- v1.2 end -->		
+
+	</file>	
+	
+<!-- v1.2 -->	
+	
+	<file name="catalog/controller/account/register.php">
+			
+		<operation>
+            <search position="before"><![CDATA[
+    	$this->data['text_your_password'] = $this->language->get('text_your_password');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+    	$this->data['text_your_salesrep'] = $this->language->get('text_your_salesrep');
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+    	$this->data['entry_zone'] = $this->language->get('entry_zone');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+    	$this->data['entry_your_salesrep'] = $this->language->get('entry_your_salesrep');		
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before"><![CDATA[
+    	if (isset($this->request->post['zone_id'])) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+		if (isset($this->request->post['salesrep_id'])) {
+      		$this->data['salesrep_id'] = $this->request->post['salesrep_id'];
+// 1.6			
+    	} else if (isset($this->request->get['slrptrk'])){
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+			if ($query->num_rows > 0) {
+				$salesrep_info = $query->row;		
+				$this->data['salesrep_id'] = $salesrep_info['salesrep_id'];
+				$this->data['salesrepref'] = 1;
+				}
+    	} else if (isset($this->request->cookie['slrptrk'])){
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->cookie['slrptrk'] . "'");
+			if ($query->num_rows > 0) {
+				$salesrep_info = $query->row;		
+				$this->data['salesrep_id'] = $salesrep_info['salesrep_id'];
+				$this->data['salesrepref'] = 1;
+				}
+    	} else {
+			$this->data['salesrep_id'] = $this->data['default_salesrep'];
+    	}
+// madimar mod fine  
+		]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before"><![CDATA[
+    	$this->data['heading_title'] = $this->language->get('heading_title');	
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+		$this->load->model('account/salesrep');
+		
+    	$this->data['salesreps'] = $this->model_account_salesrep->getSalesReps();
+    	$this->data['num_salesreps'] = $this->model_account_salesrep->getTotalSalesReps();
+		$this->data['default_salesrep'] = $this->data['salesreps'][0]['salesrep_id'];	
+// madimar mod fine  
+		]]></add>
+        </operation>
+
+	</file>
+
+	<file name="catalog/view/theme/*/template/account/register.tpl">
+
+		<operation>
+            <search position="before"><![CDATA[
+    <?php echo $text_your_password; ?>
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod -->
+	<?php if ($num_salesreps > 1 && (!isset($salesrepref) || $salesrepref == 0)) { ?>
+      <h2><?php echo $text_your_salesrep; ?></h2>
+      <div class="content" >
+      <table class="form">
+        <tr>	  
+            <td><?php echo $entry_your_salesrep; ?></td>
+            <td><select name="salesrep_id">
+                <?php foreach ($salesreps as $salesrep) { ?>
+                <?php if ($salesrep['salesrep_id'] == $salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+                <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+                <?php } ?>
+                <?php } ?>
+              </select></td>
+	    </tr>
+	  </table>	
+	  </div>	
+		<?php } else { ?>
+		<input type="hidden" name="salesrep_id" value="<?php echo $salesrep_id; ?>">
+		<?php }?>		
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>	
+	</file>		
+	
+	<file name="catalog/model/account/customer.php">
+
+		<operation>
+            <search position="after"><![CDATA[
+      	$customer_id = $this->db->getLastId();
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET" . " salesrep_id = '" . (isset($data['salesrep_id']) ? $this->db->escape($data['salesrep_id']) : 0) . "' WHERE customer_id = '" . (int)$customer_id . "'");		
+		// madimar mod end
+			]]></add>
+        </operation>
+<!-- 1.7.1 fix	
+		<operation>
+            <search position="after"><![CDATA[
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "' WHERE customer_id = '" . (int)$this->customer->getId() . "'");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET" . " salesrep_id = '" . (isset($data['salesrep_id']) ? $this->db->escape($data['salesrep_id']) : 0) . "' WHERE customer_id = '" . (int)$this->customer->getId() . "'");	
+		// madimar mod end
+			]]></add>
+        </operation>
+-->			
+	</file>	
+	
+	
+<!-- Registration during checkout -->		
+	
+	<file name="catalog/view/theme/*/template/checkout/register.tpl">
+		<operation>
+            <search position="after" index="1"><![CDATA[
+			<div class="right">
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod -->
+	<?php if ($num_salesreps > 1 && (!isset($salesrepref) || $salesrepref == 0)) { ?>
+      <h2><?php echo $text_your_salesrep; ?></h2>
+      <?php echo $entry_your_salesrep; ?><br />
+      <select name="salesrep_id">
+        <?php foreach ($salesreps as $salesrep) { ?>
+			<?php if ($salesrep['salesrep_id'] == $salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+            <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+            <?php } ?>
+        <?php } ?>
+      </select>
+	  <br />
+	  <br />	  
+		<?php } else { ?>
+		<input type="hidden" name="salesrep_id" value="<?php echo $salesrep_id; ?>">
+		<?php }?>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>
+
+	</file>	
+	
+	<file name="catalog/controller/checkout/register.php">
+		<operation>
+            <search position="before"><![CDATA[
+    	$this->data['text_your_password'] = $this->language->get('text_your_password');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+    	$this->data['text_your_salesrep'] = $this->language->get('text_your_salesrep');
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+    	$this->data['entry_zone'] = $this->language->get('entry_zone');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+    	$this->data['entry_your_salesrep'] = $this->language->get('entry_your_salesrep');		
+// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+  	public function index() {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+		$this->load->model('account/salesrep');
+		
+    	$this->data['salesreps'] = $this->model_account_salesrep->getSalesReps();
+    	$this->data['num_salesreps'] = $this->model_account_salesrep->getTotalSalesReps();
+		$this->data['default_salesrep'] = $this->data['salesreps'][0]['salesrep_id'];	
+// madimar mod fine  
+		]]></add>
+        </operation>
+		
+	</file>		
+	
+<!-- Guest Checkout -->
+	
+	<file name="catalog/controller/checkout/guest.php">
+		
+		<operation>
+            <search position="after"><![CDATA[
+  	public function index() {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+		$this->load->model('account/salesrep');
+		
+    	$this->data['salesreps'] = $this->model_account_salesrep->getSalesReps();
+    	$this->data['num_salesreps'] = $this->model_account_salesrep->getTotalSalesReps();
+		$this->data['default_salesrep'] = $this->data['salesreps'][0]['salesrep_id'];	
+// madimar mod fine  
+		]]></add>
+        </operation>	
+
+		<operation>
+            <search position="before"><![CDATA[
+    	$this->data['text_your_details'] = $this->language->get('text_your_details');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+    	$this->data['text_your_salesrep'] = $this->language->get('text_your_salesrep');
+    	$this->data['entry_your_salesrep'] = $this->language->get('entry_your_salesrep');				
+// madimar mod end
+            ]]></add>
+        </operation>
+<!-- 1.6.2 bug fix -->
+		<operation>
+            <search position="after" index="1"><![CDATA[
+				$this->session->data['guest']['fax'] = $this->request->post['fax'];
+            ]]></search>
+            <add><![CDATA[
+				// madimar mod 1.6.2 fix error if no public sales reps
+				$this->session->data['guest']['salesrep_id'] = isset($this->request->post['salesrep_id']) ? $this->request->post['salesrep_id'] : 0;
+				// madimar mod end
+            ]]></add>
+        </operation>
+				
+		<operation>
+            <search position="after" index="1"><![CDATA[
+			$this->data['button_continue'] = $this->language->get('button_continue');
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			if (isset($this->session->data['guest']['salesrep_id'])) {
+				$this->data['salesrep_id'] = $this->session->data['guest']['salesrep_id'];			
+// 1.6.2 bug fix		
+    	} else if (isset($this->request->get['slrptrk'])){
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+			if ($query->num_rows > 0) {
+				$salesrep_info = $query->row;		
+				$this->data['salesrep_id'] = $salesrep_info['salesrep_id'];
+				$this->data['salesrepref'] = 1;
+				}
+    	} else if (isset($this->request->cookie['slrptrk'])){
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->cookie['slrptrk'] . "'");
+			if ($query->num_rows > 0) {
+				$salesrep_info = $query->row;		
+				$this->data['salesrep_id'] = $salesrep_info['salesrep_id'];
+				$this->data['salesrepref'] = 1;
+				}
+    	} else {
+			$this->data['salesrep_id'] = $this->data['default_salesrep'];
+    	}
+		
+// madimar mod end  		
+            ]]></add>
+        </operation>		
+<!-- end bug fix -->				
+	</file>		
+
+
+	<file name="catalog/view/theme/*/template/checkout/guest.tpl">
+		<operation>
+            <search position="before" index="1" offset="1"><![CDATA[
+			<div class="right">
+            ]]></search>
+            <add><![CDATA[
+<!-- madimar mod -->
+	<?php if ($num_salesreps > 1 && (!isset($salesrepref) || $salesrepref == 0)) { ?>
+      <h2><?php echo $text_your_salesrep; ?></h2>
+      <?php echo $entry_your_salesrep; ?><br />
+      <select name="salesrep_id">
+        <?php foreach ($salesreps as $salesrep) { ?>
+			<?php if ($salesrep['salesrep_id'] == $salesrep_id) { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>" selected="selected"><?php echo $salesrep['name']; ?></option>
+            <?php } else { ?>
+                <option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+            <?php } ?>
+        <?php } ?>
+      </select>
+	  <br />
+	  <br />	  
+		<?php } else { ?>
+		<input type="hidden" name="salesrep_id" value="<?php echo $salesrep_id; ?>">
+		<?php }?>
+<!-- madimar mod end -->
+            ]]></add>
+        </operation>
+
+	</file>	
+
+<!-- v1.6.1 -->
+	<file name="catalog/view/theme/*/template/checkout/checkout.tpl">
+	
+<!-- oc v1.5.3.1 and 1.5.4.1 / not necessary with 1.5.5.1 -->	
+		<operation error="skip" >
+            <search position="replace" index="1"><![CDATA[
+		data: $('#payment-address input[type=\'text\'], #payment-address input[type=\'checkbox\']:checked, #payment-address select'),
+            ]]></search>
+            <add><![CDATA[
+		data: $('#payment-address input[type=\'text\'], #payment-address input[type=\'checkbox\']:checked, #payment-address select, #payment-address input[type=\'hidden\']'),
+            ]]></add>
+        </operation>	
+		
+	</file>		
+	
+<!-- v1.3 -->	
+	
+	<file name="system/library/user.php">
+		<operation>
+            <search position="after"><![CDATA[
+  	private $permission = array();
+			]]></search>
+            <add><![CDATA[
+// madimar mod
+	private $salesrep_id;
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" index="1"><![CDATA[
+			} else {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+			$salesrep_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE email = '" . $user_query->row['email'] . "' AND status = '1'");
+			if ($salesrep_query->num_rows) {			
+				$this->salesrep_id = $salesrep_query->row['salesrep_id'];
+			} else {
+				$this->salesrep_id = 0;
+			}	
+// madimar mod fine
+            ]]></add>
+        </operation>		
+		
+		<operation>
+            <search position="after"><![CDATA[
+		$this->username = '';
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->salesrep_id = '';	
+// madimar mod fine
+            ]]></add>
+        </operation>
+		
+	<operation>
+            <search position="before"><![CDATA[
+  	public function getUserName() {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+  	public function getUserSalesRepId() {
+		return $this->salesrep_id;	
+  	}
+// madimar mod fine
+            ]]></add>
+        </operation>
+	</file>		
+
+<!-- dashboard -->	
+	<file name="admin/controller/common/home.php">
+
+		<operation>
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE DATE(date_added) = DATE(NOW()) AND HOUR(date_added) = '" . (int)$i . "' GROUP BY HOUR(date_added) ORDER BY date_added ASC");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE salesrep_id = '" . $this->user->getUserSalesRepId() . "' AND DATE(date_added) = DATE(NOW()) AND HOUR(date_added) = '" . (int)$i . "' GROUP BY HOUR(date_added) ORDER BY date_added ASC");	
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "customer` WHERE DATE(date_added) = '" . $this->db->escape($date) . "' GROUP BY DATE(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "customer` WHERE DATE(date_added) = '" . $this->db->escape($date) . " AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'" . " GROUP BY DATE(date_added)");		
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE DATE(date_added) = '" . $this->db->escape($date) . "' GROUP BY DAY(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE DATE(date_added) = '" . $this->db->escape($date) . "'" . "AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'" . " GROUP BY DAY(date_added)");	
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE YEAR(date_added) = '" . date('Y') . "' AND MONTH(date_added) = '" . $i . "' GROUP BY MONTH(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer WHERE  salesrep_id = '" . $this->user->getUserSalesRepId() . "' AND YEAR(date_added) = '" . date('Y') . "' AND MONTH(date_added) = '" . $i . "' GROUP BY MONTH(date_added)");
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>
+		
+	<!-- oc v1.5.3.1 and v1.5.4.1 -->	
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND (DATE(date_added) = DATE(NOW()) AND HOUR(date_added) = '" . (int)$i . "') GROUP BY HOUR(date_added) ORDER BY date_added ASC");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE salesrep_id = '" . $this->user->getUserSalesRepId() . "' AND order_status_id > '0' AND (DATE(date_added) = DATE(NOW()) AND HOUR(date_added) = '" . (int)$i . "') GROUP BY HOUR(date_added) ORDER BY date_added ASC");		
+		}
+		// madimar mod end
+            ]]></add>
+        </operation>
+		
+		
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND DATE(date_added) = '" . $this->db->escape($date) . "' GROUP BY DATE(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND DATE(date_added) = '" . $this->db->escape($date) . " AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'" . " GROUP BY DATE(date_added)");		
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>		
+		
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND (DATE(date_added) = '" . $this->db->escape($date) . "') GROUP BY DAY(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND (DATE(date_added) = '" . $this->db->escape($date) . "') AND salesrep_id = '" . $this->user->getUserSalesRepId() . "' GROUP BY DAY(date_added)");		
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>	
+
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '0' AND YEAR(date_added) = '" . date('Y') . "' AND MONTH(date_added) = '" . $i . "' GROUP BY MONTH(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE salesrep_id = '" . $this->user->getUserSalesRepId() . "' AND order_status_id > '0' AND YEAR(date_added) = '" . date('Y') . "' AND MONTH(date_added) = '" . $i . "' GROUP BY MONTH(date_added)");
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>	
+		
+<!-- oc v1.5.5.1 -->	
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND (DATE(date_added) = DATE(NOW()) AND HOUR(date_added) = '" . (int)$i . "') GROUP BY HOUR(date_added) ORDER BY date_added ASC");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE salesrep_id = '" . $this->user->getUserSalesRepId() . "' AND order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND (DATE(date_added) = DATE(NOW()) AND HOUR(date_added) = '" . (int)$i . "') GROUP BY HOUR(date_added) ORDER BY date_added ASC");		
+		}
+		// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND DATE(date_added) = '" . $this->db->escape($date) . "' GROUP BY DATE(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND DATE(date_added) = '" . $this->db->escape($date) . " AND salesrep_id = '" . $this->user->getUserSalesRepId() . "'" . " GROUP BY DATE(date_added)");		
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND (DATE(date_added) = '" . $this->db->escape($date) . "') GROUP BY DAY(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND (DATE(date_added) = '" . $this->db->escape($date) . "') AND salesrep_id = '" . $this->user->getUserSalesRepId() . "' GROUP BY DAY(date_added)");		
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>	
+
+		<operation error="skip">
+            <search position="after"><![CDATA[
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND YEAR(date_added) = '" . date('Y') . "' AND MONTH(date_added) = '" . $i . "' GROUP BY MONTH(date_added)");
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE salesrep_id = '" . $this->user->getUserSalesRepId() . "' AND order_status_id > '" . (int)$this->config->get('config_complete_status_id') . "' AND YEAR(date_added) = '" . date('Y') . "' AND MONTH(date_added) = '" . $i . "' GROUP BY MONTH(date_added)");
+		}	
+		// madimar mod end
+            ]]></add>
+        </operation>	
+		
+		<operation>
+            <search position="after"><![CDATA[
+	public function permission() {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		//if ($this->user->getUserSalesRepId() == 0) {
+		if ($this->user->getUserSalesRepId()) {
+			if (isset($this->request->get['customer_id'])) {
+				$customer_id = $this->request->get['customer_id'];
+				$this->load->model('sale/customer');
+				//$cust_salesrep_id = $this->model_sale_customer->getSalesRepId($customer_id);
+				$user_salesrep_id = $this->user->getUserSalesRepId();
+						
+				/*if ($cust_salesrep_id != $user_salesrep_id) {
+					return $this->forward('error/permission');
+				}*/
+			} elseif (isset($this->request->get['order_id'])) {
+				$order_id = $this->request->get['order_id'];
+				$this->load->model('sale/order');
+				//$ord_salesrep_id = $this->model_sale_order->getSalesRepId($order_id);
+				$user_salesrep_id = $this->user->getUserSalesRepId();
+						
+				/*if ($ord_salesrep_id != $user_salesrep_id) {
+					return $this->forward('error/permission');
+				}*/
+			} elseif (isset($this->request->get['salesrep_id'])) {
+				$sr_salesrep_id = $this->request->get['salesrep_id'];
+				$user_salesrep_id = $this->user->getUserSalesRepId();
+						
+				if ($sr_salesrep_id != $user_salesrep_id) {
+					return $this->forward('error/permission');
+				}
+			}
+		}
+		// madimar mod end
+            ]]></add>
+        </operation>		
+		
+		
+	</file>	
+
+	<file name="admin/model/report/sale.php">
+		<operation>
+            <search position="before" offset="1"><![CDATA[
+?>
+			]]></search>
+            <add><![CDATA[
+// madimar mod
+// 1.4.2 - DB_PREFIX in sql query for some tables
+	public function getOrdersSR($data = array()) { 
+		$sql = "SELECT * FROM (SELECT sr.salesrep_id, sr.name AS salesrep, sr.area, sr.email, sr.status FROM `" . DB_PREFIX . "salesrep` sr) sr0 LEFT JOIN (SELECT sr.salesrep_id AS salesrep_id1, COUNT(customer_id) AS customers FROM `" . DB_PREFIX . "customer` c LEFT JOIN `" . DB_PREFIX . "salesrep` sr ON c.salesrep_id = sr.salesrep_id GROUP BY salesrep_id1) sr1 ON sr0.salesrep_id = sr1.salesrep_id1 LEFT JOIN (SELECT tmp.salesrep_id AS salesrep_id2, COUNT(tmp.order_id) AS orders, SUM(tmp.products) AS products, SUM(tmp.total) AS total FROM (SELECT sr.salesrep_id, o.order_id, sr.email, (SELECT SUM(op.quantity) FROM `" . DB_PREFIX . "order_product` op WHERE op.order_id = o.order_id GROUP BY op.order_id) AS products, o.total FROM `" . DB_PREFIX . "order` o LEFT JOIN `" . DB_PREFIX . "salesrep` sr ON (o.salesrep_id = sr.salesrep_id)";			
+		
+		if (isset($data['filter_order_status_id']) && $data['filter_order_status_id']) {
+			$sql .= " WHERE o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
+		} else {
+			$sql .= " WHERE o.order_status_id > '0'";
+		}
+				
+		if (isset($data['filter_date_start']) && $data['filter_date_start']) {
+			$sql .= " AND DATE(o.date_added) >= '" . $this->db->escape($data['filter_date_start']) . "'";
+		}
+
+		if (isset($data['filter_date_end']) && $data['filter_date_end']) {
+			$sql .= " AND DATE(o.date_added) <= '" . $this->db->escape($data['filter_date_end']) . "'";
+		}
+		
+		$sql .= ") tmp GROUP BY tmp.salesrep_id) sr2 ON (sr1.salesrep_id1 = sr2.salesrep_id2) ORDER BY total DESC";
+			
+		if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}			
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 20;
+			}	
+			
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+			
+		$query = $this->db->query($sql);
+	
+		return $query->rows;
+	}
+
+	public function getTotalOrdersSR($data = array()) {
+		$sql = "SELECT COUNT(DISTINCT o.salesrep_id) AS total FROM `" . DB_PREFIX . "order` o WHERE o.salesrep_id >= '0'";
+		
+		if (isset($data['filter_order_status_id']) && $data['filter_order_status_id']) {
+			$sql .= " AND o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
+		} else {
+			$sql .= " AND o.order_status_id > '0'";
+		}
+						
+		if (isset($data['filter_date_start']) && $data['filter_date_start']) {
+			$sql .= " AND DATE(o.date_added) >= '" . $this->db->escape($data['filter_date_start']) . "'";
+		}
+
+		if (isset($data['filter_date_end']) && $data['filter_date_end']) {
+			$sql .= " AND DATE(o.date_added) <= '" . $this->db->escape($data['filter_date_end']) . "'";
+		}
+						
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
+	}
+
+// madimar mod end
+            ]]></add>
+        </operation>
+
+	</file>		
+
+	<file name="admin/model/report/customer.php">
+		<operation>
+            <search position="before" index="1"><![CDATA[
+		if (!empty($data['filter_order_status_id'])) {
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$sql .= " AND c.salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}	
+			// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="before" index="2"><![CDATA[
+		if (!empty($data['filter_order_status_id'])) {
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$sql .= " AND o.salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}	
+			// madimar mod end
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before" index="3,4,5,6"><![CDATA[
+		if (!empty($data['filter_date_start'])) {
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			$implode[] = "c.salesrep_id = '" . $this->user->getUserSalesRepId() . "'";
+		}		
+		// madimar mod end
+			]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before" index="2"><![CDATA[
+$implode = array();
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+		$sql .= " cr LEFT JOIN `" . DB_PREFIX . "customer` c ON (cr.customer_id = c.customer_id)";
+		} else {
+		$sql .= " cr";
+		}
+		// madimar mod end
+			]]></add>
+        </operation>
+<!--
+		<operation>
+            <search position="replace"><![CDATA[
+		$sql = "SELECT COUNT(DISTINCT customer_id) AS total FROM `" . DB_PREFIX . "customer_reward`";
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		$sql = "SELECT COUNT(DISTINCT cr.customer_id) AS total FROM `" . DB_PREFIX . "customer_reward`";
+			// madimar mod end
+			]]></add>
+        </operation>
+-->
+		<operation>
+            <search position="before" index="4"><![CDATA[
+$implode = array();
+			]]></search>
+            <add><![CDATA[
+		// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+		$sql .= " ct LEFT JOIN `" . DB_PREFIX . "customer` c ON (ct.customer_id = c.customer_id)";
+		} else {
+		$sql .= " ct";
+		}
+		// madimar mod end
+			]]></add>
+        </operation>
+<!--
+		<operation>
+            <search position="replace"><![CDATA[
+		$sql = "SELECT COUNT(DISTINCT customer_id) AS total FROM `" . DB_PREFIX . "customer_transaction`";
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		$sql = "SELECT COUNT(DISTINCT ct.customer_id) AS total FROM `" . DB_PREFIX . "customer_transaction`";
+			// madimar mod end
+			]]></add>
+        </operation>
+-->		
+	</file>		
+		
+
+<!-- Contact -->	
+	
+	<file name="admin/controller/sale/contact.php">
+
+	<operation>
+            <search position="before" index="1"><![CDATA[
+			$emails = array();
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		$this->load->model('sale/salesrep');
+		$this->data['salesrep'] = $this->model_sale_salesrep->getSalesRep($this->user->getUserSalesRepId());		
+			// madimar mod end
+            ]]></add>
+        </operation>	
+<!-- v1.5.2.1 -->	
+		<operation>
+            <search position="before" index="1"><![CDATA[
+			switch ($this->request->post['to']) {
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {
+			switch ($this->request->post['to']) {		
+				case 'customer_mine':
+						$customer_data = array(
+							'start'  => ($page - 1) * 10,
+							'limit'  => 10
+						);
+									
+						$email_total = $this->model_sale_customer->getTotalCustomers($customer_data);
+										
+						$results = $this->model_sale_customer->getCustomers($customer_data);
+				
+						foreach ($results as $result) {
+							$emails[] = $result['email'];
+						}						
+						break;
+				case 'customer':
+						if (!empty($this->request->post['customer'])) {					
+							foreach ($this->request->post['customer'] as $customer_id) {
+								$customer_info = $this->model_sale_customer->getCustomer($customer_id);
+								
+								if ($customer_info) {
+									$emails[] = $customer_info['email'];
+								}
+							}
+						}
+						break;
+			}		
+		} else {
+			// madimar mod end
+            ]]></add>
+        </operation>		
+<!-- v1.5.2.1 mod -->
+		<operation>
+            <search position="before" index="1"><![CDATA[
+				if ($emails) {
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		}
+			// madimar mod end
+            ]]></add>
+        </operation>		
+		
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['stores'] = $this->model_setting_store->getStores();
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+		$this->load->model('sale/salesrep');
+
+		$this->data['salesrep'] = $this->model_sale_salesrep->getSalesRep($this->user->getUserSalesRepId());	
+			// madimar mod end
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+		$this->data['text_product'] = $this->language->get('text_product');	
+		]]></search>
+            <add><![CDATA[
+			// madimar mod
+		$this->data['text_customer_mine'] = $this->language->get('text_customer_mine');	
+		// madimar mod end
+            ]]></add>
+        </operation>
+<!-- v1.5.2.1 -->
+		<operation>
+            <search position="before" index="1"><![CDATA[
+				case 'affiliate_all':
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+				case 'salesrep_all':
+					$salesrep_data = array(
+						'start'  => ($page - 1) * 10,
+						'limit'  => 10
+					);
+									
+					$email_total = $this->model_sale_salesrep->getTotalSalesreps($salesrep_data);
+										
+					$results = $this->model_sale_salesrep->getSalesReps($salesrep_data, 1);
+			
+					foreach ($results as $result) {
+						$emails[] = $result['email'];
+					}						
+					break;
+				case 'salesrep':
+					if (!empty($this->request->post['salesrep'])) {					
+						foreach ($this->request->post['salesrep'] as $salesrep_id) {
+							$salesrep_info = $this->model_sale_salesrep->getSalesRep($salesrep_id);
+							
+							if ($salesrep_info) {
+								$emails[] = $salesrep_info['email'];
+							}
+						}
+					}
+					break;					
+			// madimar mod end
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="after" index="1"><![CDATA[
+		$this->data['text_product'] = $this->language->get('text_product');	
+		]]></search>
+            <add><![CDATA[
+			// madimar mod
+		$this->data['text_salesrep_all'] = $this->language->get('text_salesrep_all');	
+		$this->data['text_salesrep'] = $this->language->get('text_salesrep');	
+		$this->data['entry_salesrep'] = $this->language->get('entry_salesrep');			
+		// madimar mod end
+            ]]></add>
+        </operation>
+<!-- v1.4.4 bug fix, email from agent -->		
+		<operation>
+            <search position="replace" index="1"><![CDATA[
+						$mail->setFrom($this->config->get('config_email'));
+		]]></search>
+            <add><![CDATA[
+			// madimar mod
+		if ($this->user->getUserSalesRepId() != 0) {	
+						$salesrep_info = $this->model_sale_salesrep->getSalesRep($this->user->getUserSalesRepId());
+						$mail->setFrom($salesrep_info['email']);
+		} else {
+						$mail->setFrom($this->config->get('config_email'));
+		}
+		// madimar mod end
+            ]]></add>
+        </operation>		
+	
+	</file>		
+	
+	<file name="admin/view/template/sale/contact.tpl">
+
+		<operation>
+            <search position="after" index="1"><![CDATA[
+            <td><select name="store_id">
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod --> 
+			<?php if ($this->user->getUserSalesRepId() == 0) {  ?>
+			<!-- madimar mod end --> 
+            ]]></add>
+        </operation>
+	
+		<operation>
+            <search position="before" index="1"><![CDATA[
+              </select></td>
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod --> 
+            <?php } else { ?>
+					<option value="<?php echo $salesrep['salesrep_id']; ?>"><?php echo $salesrep['name']; ?></option>
+            <?php } ?>
+				<!-- madimar mod end --> 
+            ]]></add>
+        </operation>		
+	
+<!-- v1.5.2.1 -->	
+		<operation>
+            <search position="after" index="1"><![CDATA[
+            <td><select name="to">
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod --> 
+				<?php if ($this->user->getUserSalesRepId() != 0) { ?>
+                <option value="customer_mine"><?php echo $text_customer_mine; ?></option>
+                <option value="customer"><?php echo $text_customer; ?></option>				
+                <?php } else { ?>
+			<!-- madimar mod end --> 
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="before" index="2"><![CDATA[
+              </select></td>
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod --> 
+				<?php } ?>
+			<!-- madimar mod end --> 
+            ]]></add>
+        </operation>
+<!-- v1.5.2.1 -->
+		<operation>
+            <search position="before"><![CDATA[
+                <option value="affiliate_all"><?php echo $text_affiliate_all; ?></option>
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod -->  
+                <option value="salesrep_all"><?php echo $text_salesrep_all; ?></option>
+                <option value="salesrep"><?php echo $text_salesrep; ?></option>
+			<!-- madimar mod end --> 
+            ]]></add>
+        </operation>		
+
+		<operation>
+            <search position="before"><![CDATA[
+          <tbody id="to-affiliate" class="to">
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod --> 
+          <tbody id="to-salesrep" class="to">
+            <tr>
+              <td><?php echo $entry_salesrep; ?></td>
+              <td><input type="text" name="salesreps" value="" /></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td><div id="salesrep" class="scrollbox"></div></td>
+            </tr>
+          </tbody>
+			<!-- madimar mod end --> 
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search position="before"><![CDATA[
+<?php echo $footer; ?>
+			]]></search>
+            <add><![CDATA[
+			<!-- madimar mod --> 
+<script type="text/javascript"><!--				
+$('input[name=\'salesreps\']').catcomplete({
+	delay: 0,
+	source: function(request, response) {
+		$.ajax({
+			url: 'index.php?route=sale/salesrep/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+			dataType: 'json',
+			success: function(json) {	
+				response($.map(json, function(item) {
+					return {
+						label: item.name,
+						value: item.salesrep_id
+					}
+				}));
+			}
+		});
+		
+	}, 
+	select: function(event, ui) {
+		$('#salesrep' + ui.item.value).remove();
+		
+		$('#salesrep').append('<div id="salesrep' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" /><input type="hidden" name="salesrep[]" value="' + ui.item.value + '" /></div>');
+
+		$('#salesrep div:odd').attr('class', 'odd');
+		$('#salesrep div:even').attr('class', 'even');
+				
+		return false;
+	}
+});
+
+$('#salesrep div img').live('click', function() {
+	$(this).parent().remove();
+	
+	$('#salesrep div:odd').attr('class', 'odd');
+	$('#salesrep div:even').attr('class', 'even');	
+});//--></script> 
+			<!-- madimar mod end --> 
+            ]]></add>
+        </operation>
+		
+	</file>		
+
+	<file name="catalog/controller/common/column_right.php">
+		<operation>
+            <search position="before" index="1"><![CDATA[
+					if ($module['layout_id'] == $layout_id && $module['position'] == 'column_right' && $module['status']) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+					if ($extension['code'] == "salesrep") {
+						$module['status'] = 0; // generally disables salesrep modules as first step
+						// user logged and with salesrep assigned or admin module
+						if ($this->customer->isLogged()) {
+							$this_salesrep_id = $this->customer->getSalesRepId();						
+							if ((isset($this_salesrep_id) && $module['salesrep_id'] == $this_salesrep_id) || $module['salesrep_id'] == 0) {
+								$module['status'] = 1 ;
+							}
+							// user not logged
+						} else {
+							if (isset($this->request->get['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									setcookie('slrptrk', $this->request->get['slrptrk'], time() + 3600 * 24 * 1000, '/');									
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}						
+							}	
+/*							
+							if (isset($this->request->cookie['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->cookie['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}
+							} 
+*/
+						}
+					}	
+// madimar mod end
+            ]]></add>
+        </operation>
+
+	</file>	
+
+	<file name="catalog/controller/common/column_left.php">
+		<operation>
+            <search position="before" index="1"><![CDATA[
+					if ($module['layout_id'] == $layout_id && $module['position'] == 'column_left' && $module['status']) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+					if ($extension['code'] == "salesrep") {
+						$module['status'] = 0; // generally disables salesrep modules as first step
+						// user logged and with salesrep assigned or admin module
+						if ($this->customer->isLogged()) {
+							$this_salesrep_id = $this->customer->getSalesRepId();						
+							if ((isset($this_salesrep_id) && $module['salesrep_id'] == $this_salesrep_id) || $module['salesrep_id'] == 0) {
+								$module['status'] = 1 ;
+							}
+							// user not logged
+						} else {
+							if (isset($this->request->get['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									setcookie('slrptrk', $this->request->get['slrptrk'], time() + 3600 * 24 * 1000, '/');									
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}						
+							}	
+/*							
+							if (isset($this->request->cookie['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->cookie['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}
+							} 
+*/
+						}
+					}	
+// madimar mod end
+            ]]></add>
+        </operation>
+
+	</file>		
+
+	<file name="catalog/controller/common/content_top.php">
+		<operation>
+            <search position="before" index="1"><![CDATA[
+					if ($module['layout_id'] == $layout_id && $module['position'] == 'content_top' && $module['status']) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+					if ($extension['code'] == "salesrep") {
+						$module['status'] = 0; // generally disables salesrep modules as first step
+						// user logged and with salesrep assigned or admin module
+						if ($this->customer->isLogged()) {
+							$this_salesrep_id = $this->customer->getSalesRepId();						
+							if ((isset($this_salesrep_id) && $module['salesrep_id'] == $this_salesrep_id) || $module['salesrep_id'] == 0) {
+								$module['status'] = 1 ;
+							}
+							// user not logged
+						} else {
+							if (isset($this->request->get['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									setcookie('slrptrk', $this->request->get['slrptrk'], time() + 3600 * 24 * 1000, '/');									
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}						
+							}	
+/*							
+							if (isset($this->request->cookie['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->cookie['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}
+							} 
+*/
+						}
+					}	
+// madimar mod end
+            ]]></add>
+        </operation>
+
+	</file>	
+
+	<file name="catalog/controller/common/content_bottom.php">
+		<operation>
+            <search position="before" index="1"><![CDATA[
+					if ($module['layout_id'] == $layout_id && $module['position'] == 'content_bottom' && $module['status']) {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+					if ($extension['code'] == "salesrep") {
+						$module['status'] = 0; // generally disables salesrep modules as first step
+						// user logged and with salesrep assigned or admin module
+						if ($this->customer->isLogged()) {
+							$this_salesrep_id = $this->customer->getSalesRepId();						
+							if ((isset($this_salesrep_id) && $module['salesrep_id'] == $this_salesrep_id) || $module['salesrep_id'] == 0) {
+								$module['status'] = 1 ;
+							}
+							// user not logged
+						} else {
+							if (isset($this->request->get['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									setcookie('slrptrk', $this->request->get['slrptrk'], time() + 3600 * 24 * 1000, '/');									
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}						
+							}	
+/*							
+							if (isset($this->request->cookie['slrptrk'])) {
+								$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->cookie['slrptrk'] . "'");
+								if ($query->num_rows > 0) {
+									$salesrep_info = $query->row;
+									if (isset($salesrep_info) && $module['salesrep_id'] == $salesrep_info['salesrep_id']) $module['status'] = 1 ;
+								}
+							} 
+*/
+						}
+					}	
+// madimar mod end
+            ]]></add>
+        </operation>
+
+	</file>	
+	
+<!-- v1.7.0 -->	
+	
+	<file name="catalog/controller/common/header.php">
+			
+		<operation>
+            <search position="after"><![CDATA[
+index() {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod 
+			if (isset($this->request->get['slrptrk'])){
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "salesrep WHERE code = '" . $this->request->get['slrptrk'] . "'");
+				if ($query->num_rows > 0) setcookie('slrptrk', $this->request->get['slrptrk'], time() + 3600 * 24 * 1000, '/');
+			}
+// madimar mod fine  
+		]]></add>
+        </operation>
+
+	</file>	
+	
+</modification>

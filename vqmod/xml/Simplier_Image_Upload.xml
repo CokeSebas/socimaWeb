@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+  <id>Simplier Image Upload</id>
+  <version>1.0.0</version>
+  <vqmver>1.0.0</vqmver>
+  <author>andremaha</author>
+  <file name="admin/view/template/catalog/product_form.tpl">
+    <operation>
+      <search position="after"><![CDATA[<a onclick="addImage();" class="button"><?php echo $button_add_image; ?></a>]]></search>
+      <add><![CDATA[
+
+<div class="container">
+
+    <!-- The file upload form used as target for the file upload widget -->
+    <form id="fileupload" action="//jquery-file-upload.appspot.com/" method="POST" enctype="multipart/form-data">
+        <!-- Redirect browsers with JavaScript disabled to the origin page -->
+        <noscript><input type="hidden" name="redirect" value="http://blueimp.github.com/jQuery-File-Upload/"></noscript>
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="row fileupload-buttonbar">
+            <div class="span7">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="btn btn-success fileinput-button">
+                    <i class="icon-plus icon-white"></i>
+                    <span>Subir Imagenes
+					</span>
+                    <input type="file" name="files[]" multiple>
+                </span>
+                <button type="submit" class="btn btn-primary start">
+                    <i class="icon-upload icon-white"></i>
+                    <span>Start upload</span>
+                </button>
+                <button type="reset" class="btn btn-warning cancel">
+                    <i class="icon-ban-circle icon-white"></i>
+                    <span>Cancel upload</span>
+                </button>
+                <!--button type="button" class="btn btn-danger delete">
+                    <i class="icon-trash icon-white"></i>
+                    <span>Delete</span>
+                </button-->
+                <input type="checkbox" class="toggle">
+            </div>
+            <!-- The global progress information -->
+            <div class="span5 fileupload-progress fade">
+                <!-- The global progress bar -->
+                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="bar" style="width:0%;"></div>
+                </div>
+                <!-- The extended global progress information -->
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <!-- The loading indicator is shown during file processing -->
+        <div class="fileupload-loading"></div>
+        <br>
+        <!-- The table listing the files available for upload/download -->
+        <table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+    
+    <br>
+</div>
+<!-- modal-gallery is the modal dialog used for the image gallery -->
+<div id="modal-gallery" class="modal modal-gallery hide fade" data-filter=":odd" tabindex="-1">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h3 class="modal-title"></h3>
+    </div>
+    <div class="modal-body"><div class="modal-image"></div></div>
+    <div class="modal-footer">
+        <a class="btn modal-download" target="_blank">
+            <i class="icon-download"></i>
+            <span>Download</span>
+        </a>
+        <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000">
+            <i class="icon-play icon-white"></i>
+            <span>Slideshow</span>
+        </a>
+        <a class="btn btn-info modal-prev">
+            <i class="icon-arrow-left icon-white"></i>
+            <span>Previous</span>
+        </a>
+        <a class="btn btn-primary modal-next">
+            <span>Next</span>
+            <i class="icon-arrow-right icon-white"></i>
+        </a>
+    </div>
+</div>
+<!-- The template to display files available for upload -->
+<script id="template-upload" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td class="preview"><span class="fade"></span></td>
+        <td class="name"><span>{%=file.name%}</span></td>
+        <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+        {% if (file.error) { %}
+            <td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
+        {% } else if (o.files.valid && !i) { %}
+            <td>
+                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" style="width:0%;"></div></div>
+            </td>
+            <td>{% if (!o.options.autoUpload) { %}
+                <button class="btn btn-primary start">
+                    <i class="icon-upload icon-white"></i>
+                    <span>Start</span>
+                </button>
+            {% } %}</td>
+        {% } else { %}
+            <td colspan="2"></td>
+        {% } %}
+        <td>{% if (!i) { %}
+            <button class="btn btn-warning cancel">
+                <i class="icon-ban-circle icon-white"></i>
+                <span>Cancel</span>
+            </button>
+        {% } %}</td>
+    </tr>
+{% } %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-download fade">
+        {% if (file.error) { %}
+            <td></td>
+            <td class="name"><span>{%=file.name%}</span></td>
+            <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+            <td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
+        {% } else { %}
+            <td class="preview">{% if (file.thumbnail_url) { %}
+				<a href="{%=file.url%}" title="{%=file.name%}" data-gallery="gallery" download="{%=file.name%}"><img src="{%=file.thumbnail_url%}"></a></td>
+				{% } else { %}
+				<td class="preview">
+					<a href="http://socimagestion.com/image/data/<?php echo '{%=file.name%}'; ?>" title="{%=file.name%}" data-gallery="gallery" download="{%=file.name%}"><img src="http://socimagestion.com/image/data/<?php echo '{%=file.name%}'; ?>" width="100px" height="100px" ></a></td>
+				{% } %}
+            <td class="name">
+                <a href="{%=file.url%}" title="{%=file.name%}" data-gallery="{%=file.thumbnail_url&&'gallery'%}" download="{%=file.name%}">{%=file.name%}</a>
+            </td>
+            <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+            <td colspan="2"></td>
+        {% } %}
+        <td>
+            <button class="btn btn-danger delete" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}"{% if (file.delete_with_credentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                <i class="icon-trash icon-white"></i>
+                <span>Delete</span>
+            </button>
+            <input type="checkbox" name="delete" value="1" class="toggle">
+        </td>
+    </tr>
+{% } %}
+</script>
+</div>
+
+        ]]>
+      </add>
+    </operation>
+  </file>
+  <!--file name="admin/language/*/tool/error_log.php">
+    <operation>
+      <search position="before"><![CDATA[?>]]></search>
+      <add><![CDATA[$_['button_clearcache']  = 'Clear Cache';$_['text_successch']  = 'Success: You have successfully cleared your cache!';]]></add>
+    </operation>
+  </file-->
+
+  <!--<file name="admin/view/template/common/header.tpl">-->
+  <file name="admin/view/template/admin_theme/base5builder_circloid/common/header.tpl">
+    <operation>
+      <search position="before"><![CDATA[</head>]]></search>
+      <add><![CDATA[
+		  
+      <?php if ($this->request->get): ?>
+	  <?php if ($this->request->get['route'] === 'catalog/product/update' || $this->request->get['route'] === 'catalog/product/insert'): ?>
+
+<!-- Bootstrap CSS Toolkit styles -->
+<link rel="stylesheet" href="view/javascript/jquery-file-upload/css/bootstrap.min.css">
+<!-- Generic page styles -->
+<link rel="stylesheet" href="view/javascript/jquery-file-upload/css/style.css">
+<!-- Bootstrap styles for responsive website layout, supporting different screen sizes -->
+<link rel="stylesheet" href="view/javascript/jquery-file-upload/css/bootstrap-responsive.min.css">
+<!-- Bootstrap CSS fixes for IE6 -->
+<!--[if lt IE 7]><link rel="stylesheet" href="view/javascript/jquery-file-upload/css/bootstrap-ie6.min.css"><![endif]-->
+<!-- Bootstrap Image Gallery styles -->
+<link rel="stylesheet" href="view/javascript/jquery-file-upload/css/bootstrap-image-gallery.min.css">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="view/javascript/jquery-file-upload/css/jquery.fileupload-ui.css">
+<!-- CSS adjustments for browsers with JavaScript disabled -->
+<noscript><link rel="stylesheet" href="view/javascript/jquery-file-upload/css/jquery.fileupload-ui-noscript.css"></noscript>
+<!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
+<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+<!-- Bootstrap collistions FIX -->
+<style type="text/css">
+    h1, h2, h3 {
+        line-height: 20px;
+    }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        line-height: 10px;
+        padding-top: 0;
+    }
+    select#range {
+        height: 10px;
+        line-height: 10px;
+    }
+    #form #tab-image .container {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    table.list input, textarea, .uneditable-input {
+        width: auto;
+    }
+
+    #form input[name^=product_description] {
+        width: 500px;
+    }
+
+    #form textarea[name^=product_description] {
+        width: 500px;
+        height: 200px;
+    }
+
+    #form #tab-option input, textarea, keygen, select, button, isindex {
+        margin: 0em;
+        font: -webkit-small-control;
+        color: initial;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        display: inline-block;
+        text-align: start;
+        width: auto;
+        height: auto;
+    }
+
+    #tab-image #images {
+        display: none;
+    }
+
+    /* Disable start button for image uploader */
+    .btn.btn-primary.start {
+        display: none;
+    }
+
+    /* Disable cancel upload button */
+    .btn.btn-warning.cancel {
+        display: none;
+    }
+
+    /* Disable checkboxes for image uploader */ 
+    .fileupload-buttonbar .toggle, .files .toggle, .files .btn span {
+        display: none;
+    }
+
+    /* Make place for scrolling on iPad */
+    #tab-image {
+        width: 660px;
+    }
+</style>
+
+<?php endif; ?>
+<?php endif; ?>
+        ]]></add>
+    </operation>
+  </file>   
+
+  <!--<file name="admin/view/template/common/footer.tpl">-->
+  <file name="admin/view/template/admin_theme/base5builder_circloid/common/footer.tpl">
+    <operation> 
+      <search position="before">
+        <![CDATA[</body></html>]]>
+      </search>
+      <add>
+        <![CDATA[
+ <?php if ($this->request->get): ?>
+<?php if ($this->request->get['route'] === 'catalog/product/update' || $this->request->get['route'] === 'catalog/product/insert'): ?>
+
+<!-- TODO: Compress JS -->
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="view/javascript/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="view/javascript/jquery-file-upload/js/vendor/tmpl.min.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="view/javascript/jquery-file-upload/js/vendor/load-image.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="view/javascript/jquery-file-upload/js/vendor/canvas-to-blob.min.js"></script>
+<!-- Bootstrap JS and Bootstrap Image Gallery are not required, but included for the demo -->
+<script src="view/javascript/jquery-file-upload/js/vendor/bootstrap.min.js"></script>
+<script src="view/javascript/jquery-file-upload/js/vendor/bootstrap-image-gallery.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="view/javascript/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="view/javascript/jquery-file-upload/js/jquery.fileupload.js"></script>
+<!-- The File Upload file processing plugin -->
+<script src="view/javascript/jquery-file-upload/js/jquery.fileupload-fp.js"></script>
+<!-- The File Upload user interface plugin -->
+<script src="view/javascript/jquery-file-upload/js/jquery.fileupload-ui.js"></script>
+<!-- The Jquery Punch Plugin -->
+<script src="view/javascript/jquery-ui-punch/jquery.ui.touch-punch.min.js"></script>
+<!-- The main application script -->
+<script src="view/javascript/jquery-file-upload/js/main.js"></script>
+
+        <script>
+                    $(document).ready(function(){
+
+                        /**
+                         * Fill in the Product titles for each language + model.
+                         *
+                         */
+                        function fillInProductTitleAndModel() {
+                            var placeHolder = 'product-' + new Date().getTime();
+
+                            // For different translations we genereate here 10 possible product titles
+                            for (var i = 1; i<=10; i++) {
+                                $('input[name="product_description[' + i +'][name]"]').val(placeHolder);
+                            }
+                            
+
+                            // Model
+                            $('input[name="model"]').val(placeHolder);
+
+                        }
+
+                        /**
+                        * Sets product status by checking the select option in the product form
+                        * status int 1|0
+                        */
+                        function setProductStatus(status) {
+                            $('select[name="status"]').val(status);
+                        }
+
+                        /**
+                         * Autosubmit the Product Insert form, so we would be redirected to
+                         * product update, where we can add images and do other interesiting stuff,
+                         * since by that time we would have the product ID.
+                         */
+                        function autosubmitProductInsertForm() {
+                            $('#form').submit();
+                        }
+
+                        /**
+                         * Transliterator RU -> EN
+                         */
+                        var ru2en = {
+                              ru_str : "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя",
+                              en_str : ['A','B','V','G','D','E','JO','ZH','Z','I','J','K','L','M','N','O','P','R','S','T',
+                                'U','F','H','C','CH','SH','SHH',String.fromCharCode(35),'I',String.fromCharCode(39),'JE','JU',
+                                'JA','a','b','v','g','d','e','jo','zh','z','i','j','k','l','m','n','o','p','r','s','t','u','f',
+                                'h','c','ch','sh','shh',String.fromCharCode(35),'i',String.fromCharCode(39),'je','ju','ja'],
+                              translit : function(org_str) {
+                                var tmp_str = "";
+                                for(var i = 0, l = org_str.length; i < l; i++) {
+                                  var s = org_str.charAt(i), n = this.ru_str.indexOf(s);
+                                  if(n >= 0) { tmp_str += this.en_str[n]; }
+                                  else { tmp_str += s; }
+                                }
+                                return tmp_str;
+                              },
+                              tr : function(org_str) {
+                                var tmp_str = [];
+                                for(var i = 0, l = org_str.length; i < l; i++) {
+                                  var s = org_str.charAt(i), n = this.ru_str.indexOf(s);
+                                  if(n >= 0) { tmp_str[tmp_str.length] = this.en_str[n]; }
+                                  else { tmp_str[tmp_str.length] = s; }
+                                }
+                                return tmp_str.join("");
+                              },
+                              t : function (inp){
+                                return inp.replace(/(.)/g,function(a) { return ru2en.ru2en[a] });
+                              },
+                              t1 : function (inp) {
+                                var a = inp.split("");
+                                for (var i=0,aL=a.length;i<aL;i++) {a[i] = ru2en.ru2en[a[i]]}
+                                return a.join("");
+                              },
+                              ttt : function (inp){
+                                var reg;
+                                for (var a in ru2en.ru2en) {
+                                  reg = new RegExp(a, "g");
+                                  inp = inp.replace(reg, ru2en.ru2en[a]);
+                                }
+                                return inp;
+                              }
+                        }
+
+                        /**
+                         * Takes the russian product name and trnasliterates it into english product name.
+                         * On the fly.
+                         *
+                         */
+                        function translateRussianTitleToEnglish() {
+                            $('input[name="product_description[2][name]"]').on('input', function(){
+                                var russianInput = $(this).val();
+                                $('input[name="product_description[1][name]"]').val(ru2en.translit(russianInput));
+                            });
+                        }
+
+                        /**
+                         * After the redirect the product name is filled with the pregenerated value.
+                         * That must be emptied - so we've got the form validation again.
+                         * 
+                         */
+                        function emptyPregeneratedProductName() {
+                             // Empty product pregenerated Name - for all the languages
+                            for (i=0;i<=10;i++) {
+                                var text = $('input[name="product_description[' + i  + '][name]"]').val();
+                                var pregeneratedPattern = /product-\d+/;
+                                var match = pregeneratedPattern.exec(text);
+                                if (match != null) {                                    
+                                    $('input[name="product_description[' + i + '][name]"]').val('');
+                                } 
+                                
+                                // And focus on the product name field
+                                $('input[name="product_description[1][name]"]').focus();
+                            }
+                        }
+
+                         /**
+                         * After the redirect the model name is filled with the pregenerated value.
+                         * That must be emptied - so we've got the form validation again.
+                         * 
+                         */
+                        function emptyPregeneratedProductModel() {
+
+                            // Empty product pregenerated Model
+                            var text = $('input[name="model"]').val();
+                            var pregeneratedPattern = /product-\d+/;
+                            var match = pregeneratedPattern.exec(text);
+                            if (match != null) {
+                                $('input[name="model"]').val('');
+                            } 
+                        }
+
+                        /**
+                         * Load scripts for needed page
+                         */
+                        function loadScriptsForNeededPage() {
+
+                            // Product Insert Page
+                            if (document.URL.indexOf('catalog/product/insert') !== -1) {
+                                fillInProductTitleAndModel();
+                                setProductStatus(0);  
+                                autosubmitProductInsertForm();
+                            }
+
+                            // Product Update Page
+                            if (document.URL.indexOf('catalog/product/update') !== -1) {
+                                translateRussianTitleToEnglish();
+                                emptyPregeneratedProductName();
+                                emptyPregeneratedProductModel();
+                                setProductStatus(1);
+                            }
+
+                        }
+                        // TODO: closure here
+                        loadScriptsForNeededPage();
+                    });
+        </script>
+		
+		<?php endif; ?>
+        <?php endif; ?>
+        ]]>
+      </add> 
+    </operation> 
+  </file>
+    <!-- Return the last insterted product ID -->
+    <file name="admin/model/catalog/product.php">
+        <operation>
+            <search position="before" offset="3"><![CDATA[public function editProduct($product_id, $data) {]]></search>
+            <add><![CDATA[
+
+                /**
+                 * =AE Return the ID of the last added product
+                 */
+                return $product_id;
+
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <!-- Get the last insterted product ID -->
+    <file name="admin/controller/catalog/product.php">
+        <operation>
+            <search position="replace"><![CDATA[$this->model_catalog_product->addProduct($this->request->post);]]></search>
+            <add><![CDATA[
+
+                /**
+                 * =AE Save the ID of the last added product to the property
+                 */
+                $product_id = $this->model_catalog_product->addProduct($this->request->post);
+
+                ]]>
+            </add>  
+        </operation>
+        <operation>
+            <search position="replace" index="1"><![CDATA[$this->redirect($this->url->link('catalog/product', 'token=' . $this->session->data['token'] . $url, 'SSL'));]]></search>
+            <add><![CDATA[
+
+                    /**
+                     * =AE Redirect to the edit product directly after creating it
+                     */
+                    $url .= '&product_id=' . $product_id;
+                    $this->redirect($this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+
+                    ]]>
+            </add>
+        </operation>
+    </file>
+    
+    <!-- Patch product model to handle multiple file uploads -->
+    <file name="admin/model/catalog/product.php">
+        <!-- Do not update images in DB on save - that is done with JavaScript -->
+        <operation>
+            <search position="replace" offset="5">
+                <![CDATA[
+                if (isset($data['product_image'])) {
+                ]]>
+            </search>
+            <add>
+                <![CDATA[
+
+                ]]>
+            </add>
+        </operation>
+        
+        <operation>
+            <search position="replace" index="1">
+                <![CDATA[
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "product_image WHERE product_id = '" . (int)$product_id . "'");
+                ]]>
+            </search>
+            <add>
+                <![CDATA[
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <!-- No Image Upload from the Data Tab. The first image of the Image Tab is the product image -->
+    <file name="admin/view/template/catalog/product_form.tpl">
+        <operation>
+            <search position="replace" offset="4">
+                <![CDATA[
+                <td><?php echo $entry_image; ?></td>
+                ]]>
+            </search>
+            <add>
+                <![CDATA[
+
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <!-- //=AE Do not duplicate the first image -->
+    <file name="catalog/controller/product/product.php">
+        <operation>
+            <search position="before">
+                <![CDATA[
+                $this->data['images'][] = array(
+                ]]>
+            </search>
+            <add>
+                <![CDATA[
+                if ($product_info['image'] !== $result['image']) {
+                ]]>
+            </add>
+        </operation>
+        <operation>
+            <search position="after" offset="2">
+                <![CDATA[
+                'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_additional_width'), $this->config->get('config_image_additional_height'))
+                ]]>
+            </search>
+            <add>
+                <![CDATA[
+                }
+                ]]>
+            </add>
+        </operation>
+    </file>
+</modification>

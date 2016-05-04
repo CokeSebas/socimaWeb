@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<modification>
+	<id>Base5Builder - Admin Theme Circloid - Kuler Fix</id>
+	<vqmver>2.0</vqmver>
+	<author>Base5Builder.com - support@base5builder.com</author>
+	<file name="admin/view/template/module/layerslider/sliders.tpl">
+        <operation error="skip">
+            <search position="replace"><![CDATA[
+            	<div class="btn-group">
+            ]]></search>
+            <add><![CDATA[
+                <script>
+                    $(document).ready(function(){
+                        $(".btn.btn-success.dropdown-toggle").click(function(){
+                            $(".btn-group").toggleClass("open");
+                        });
+                    });
+                </script>
+                <div class="btn-group">
+            ]]></add>
+        </operation>
+	</file>
+    <file name="admin/view/template/admin_theme/base5builder_circloid/common/header.tpl">
+        <operation error="skip">
+            <search position="before"><![CDATA[
+                </head>
+            ]]></search>
+            <add><![CDATA[
+                <?php
+                if(isset($this->request->get['route'])){
+
+                    if(in_array($this->request->get['route'], $is_kuler)){
+                ?>
+                <script>
+                    $(document).ready(function(){
+                        $('.container-fluid').append('<div id="container"></div>');
+                    });
+                </script>
+                <?php
+                    }
+                }
+                ?>
+            ]]></add>
+        </operation>
+    </file>
+</modification>

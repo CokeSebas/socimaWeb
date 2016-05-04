@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+        <id>Discount Tags</id>
+        <version>1.0.0</version>
+        <vqmver>2.3.0</vqmver>
+        <author>Infinia Systems</author>
+
+        <file path="admin/controller/setting/" name="store.php,setting.php">
+                <operation>             
+                        <search position="after"><![CDATA[
+	$this->data['tab_server'] = $this->language->get('tab_server');
+                        ]]></search>
+                        <add><![CDATA[
+	$this->language->load('setting/discount_tags'); 
+	$this->data['tab_discount_tags'] = $this->language->get('tab_discount_tags');
+	$this->data['entry_discount_count'] = $this->language->get('entry_discount_count');
+	$this->data['entry_use_discount_tags'] = $this->language->get('entry_use_discount_tags');
+	$this->data['entry_discount_each'] = $this->language->get('entry_discount_each');
+	$this->data['entry_discount_from'] = $this->language->get('entry_discount_from');
+	$this->data['entry_discount_image'] = $this->language->get('entry_discount_image');
+	$this->data['entry_stock_image'] = $this->language->get('entry_stock_image');
+	$this->data['entry_use_stock_tags'] = $this->language->get('entry_use_stock_tags');
+	$this->data['entry_stock_in'] = $this->language->get('entry_stock_in');
+	$this->data['entry_stock_out'] = $this->language->get('entry_stock_out');
+	$this->data['entry_stock_new'] = $this->language->get('entry_stock_new');
+	$this->data['entry_stock_left'] = $this->language->get('entry_stock_left');
+	$this->data['entry_discount_text'] = $this->language->get('entry_discount_text');
+	$this->data['entry_stock_in_text'] = $this->language->get('entry_stock_in_text');
+	$this->data['entry_stock_out_text'] = $this->language->get('entry_stock_out_text');
+	$this->data['entry_stock_new_text'] = $this->language->get('entry_stock_new_text');
+	$this->data['entry_stock_left_text'] = $this->language->get('entry_stock_left_text');
+                        ]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/controller/setting/" name="setting.php">
+                <operation>               
+                        <search position="after"><![CDATA[
+	$this->model_localisation_language->getLanguages();
+                        ]]></search>
+                        <add><![CDATA[
+	if (isset($this->request->post['config_use_discount_tags'])) {
+		$this->data['config_use_discount_tags'] = $this->request->post['config_use_discount_tags'];
+	} elseif ($this->config->get('config_use_discount_tags')) {
+		$this->data['config_use_discount_tags'] = $this->config->get('config_use_discount_tags');
+	} else {
+		$this->data['config_use_discount_tags'] = 0;
+	}
+	if (isset($this->request->post['config_tag_count'])) {
+		$this->data['config_tag_count'] = $this->request->post['config_tag_count'];
+	} elseif ($this->config->get('config_tag_count')!='') {
+		$this->data['config_tag_count'] = $this->config->get('config_tag_count');
+	} else {
+		$this->data['config_tag_count'] = 5;
+	}	
+	if (isset($this->request->post['config_tag_each'])) {
+		$this->data['config_tag_each'] = $this->request->post['config_tag_each'];
+	} elseif ($this->config->get('config_tag_each')!='') {
+		$this->data['config_tag_each'] = $this->config->get('config_tag_each');
+	} else {
+		$this->data['config_tag_each'] = 10;
+	}	
+	if (isset($this->request->post['config_discount_from'])) {
+		$this->data['config_discount_from'] = $this->request->post['config_discount_from'];
+	} elseif ($this->config->get('config_discount_from')!='') {
+		$this->data['config_discount_from'] = $this->config->get('config_discount_from');
+	} else {
+		$this->data['config_discount_from'] = 0;
+	}	
+	if (isset($this->request->post['config_use_stock_tags'])) {
+		$this->data['config_use_stock_tags'] = $this->request->post['config_use_stock_tags'];
+	} elseif ($this->config->get('config_use_stock_tags')) {
+		$this->data['config_use_stock_tags'] = $this->config->get('config_use_stock_tags');
+	} else {
+		$this->data['config_use_stock_tags'] = 0;
+	}
+	if (isset($this->request->post['config_stock_in'])) {
+		$this->data['config_stock_in'] = $this->request->post['config_stock_in'];
+	} elseif ($this->config->get('config_stock_in')!='') {
+		$this->data['config_stock_in'] = $this->config->get('config_stock_in');
+	} else {
+		$this->data['config_stock_in'] = 1;
+	}
+	if (isset($this->request->post['config_stock_out'])) {
+		$this->data['config_stock_out'] = $this->request->post['config_stock_out'];
+	} elseif ($this->config->get('config_stock_out')!='') {
+		$this->data['config_stock_out'] = $this->config->get('config_stock_out');
+	} else {
+		$this->data['config_stock_out'] = 0;
+	}
+	if (isset($this->request->post['config_stock_new'])) {
+		$this->data['config_stock_new'] = $this->request->post['config_stock_new'];
+	} elseif ($this->config->get('config_stock_new')!='') {
+		$this->data['config_stock_new'] = $this->config->get('config_stock_new');
+	} else {
+		$this->data['config_stock_new'] = 30;
+	}
+	if (isset($this->request->post['config_stock_left'])) {
+		$this->data['config_stock_left'] = $this->request->post['config_stock_left'];
+	} elseif ($this->config->get('config_stock_left')!='') {
+		$this->data['config_stock_left'] = $this->config->get('config_stock_left');
+	} else {
+		$this->data['config_stock_left'] = 5;
+	}
+
+	foreach ($this->data['languages'] as $language){
+		if (isset($this->request->post['config_stock_in_text_'.$language['code']])) {
+			$this->data['config_stock_in_text_'.$language['code']] = $this->request->post['config_stock_in_text_'.$language['code']];
+		} elseif ($this->config->get('config_stock_in_text_'.$language['code'])!='') {
+			$this->data['config_stock_in_text_'.$language['code']] = $this->config->get('config_stock_in_text_'.$language['code']);
+		} else {
+			$this->data['config_stock_in_text_'.$language['code']] = 'In stock';
+		}
+	
+		if (isset($this->request->post['config_stock_out_text_'.$language['code']])) {
+			$this->data['config_stock_out_text_'.$language['code']] = $this->request->post['config_stock_out_text_'.$language['code']];
+		} elseif ($this->config->get('config_stock_out_text_'.$language['code'])!='') {
+			$this->data['config_stock_out_text_'.$language['code']] = $this->config->get('config_stock_out_text_'.$language['code']);
+		} else {
+			$this->data['config_stock_out_text_'.$language['code']] = 'Out of stock';
+		}
+
+		if (isset($this->request->post['config_stock_new_text_'.$language['code']])) {
+			$this->data['config_stock_new_text_'.$language['code']] = $this->request->post['config_stock_new_text_'.$language['code']];
+		} elseif ($this->config->get('config_stock_new_text_'.$language['code'])!='') {
+			$this->data['config_stock_new_text_'.$language['code']] = $this->config->get('config_stock_new_text_'.$language['code']);
+		} else {
+			$this->data['config_stock_new_text_'.$language['code']] = 'New';
+		}
+	
+		if (isset($this->request->post['config_stock_left_text_'.$language['code']])) {
+			$this->data['config_stock_left_text_'.$language['code']] = $this->request->post['config_stock_left_text_'.$language['code']];
+		} elseif ($this->config->get('config_stock_left_text_'.$language['code'])!='') {
+			$this->data['config_stock_left_text_'.$language['code']] = $this->config->get('config_stock_left_text_'.$language['code']);
+		} else {
+			$this->data['config_stock_left_text_'.$language['code']] = 'Only @1 left';
+		}
+	
+		if (isset($this->request->post['config_discount_text_'.$language['code']])) {
+			$this->data['config_discount_text_'.$language['code']] = $this->request->post['config_discount_text_'.$language['code']];
+		} elseif ($this->config->get('config_discount_text_'.$language['code'])!='') {
+			$this->data['config_discount_text_'.$language['code']] = $this->config->get('config_discount_text_'.$language['code']);
+		} else {
+			$this->data['config_discount_text_'.$language['code']] = '-@1%';
+		}
+	}
+
+                        ]]></add>
+		</operation>
+                <operation>               
+                        <search position="after"><![CDATA[
+	$this->load->model('tool/image');
+                        ]]></search>
+                        <add><![CDATA[
+	if (isset($this->request->post['config_discount_image'])) {
+		$this->data['config_discount_image'] = $this->request->post['config_discount_image'];
+	} else {
+		$this->data['config_discount_image'] = $this->config->get('config_discount_image');			
+	}
+	if ($this->config->get('config_discount_image') && file_exists(DIR_IMAGE . $this->config->get('config_discount_image')) && is_file(DIR_IMAGE . $this->config->get('config_discount_image'))) {
+		$this->data['discount_image'] = $this->model_tool_image->resize($this->config->get('config_discount_image'), 100, 100);		
+	} else {
+		$this->data['discount_image'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+	}
+	if (isset($this->request->post['config_stock_image'])) {
+		$this->data['config_stock_image'] = $this->request->post['config_stock_image'];
+	} else {
+		$this->data['config_stock_image'] = $this->config->get('config_stock_image');			
+	}
+	if ($this->config->get('config_stock_image') && file_exists(DIR_IMAGE . $this->config->get('config_stock_image')) && is_file(DIR_IMAGE . $this->config->get('config_stock_image'))) {
+		$this->data['stock_image'] = $this->model_tool_image->resize($this->config->get('config_stock_image'), 100, 100);		
+	} else {
+		$this->data['stock_image'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+	}
+                        ]]></add>
+		</operation>
+	</file>
+	<file path="admin/controller/setting/" name="store.php">
+                <operation>              
+                        <search position="after"><![CDATA[
+	$this->model_localisation_language->getLanguages();
+                        ]]></search>
+                        <add><![CDATA[
+	if (isset($this->request->post['config_use_discount_tags'])) {
+		$this->data['config_use_discount_tags'] = $this->request->post['config_use_discount_tags'];
+	} elseif (isset($store_info['config_use_discount_tags'])) {
+		$this->data['config_use_discount_tags'] = $store_info['config_use_discount_tags'];
+	} else {
+		$this->data['config_use_discount_tags'] = 0;
+	}
+	if (isset($this->request->post['config_tag_count'])) {
+		$this->data['config_tag_count'] = $this->request->post['config_tag_count'];
+	} elseif (isset($store_info['config_tag_count'])) {
+		$this->data['config_tag_count'] = $store_info['config_tag_count'];
+	} else {
+		$this->data['config_tag_count'] = 5;
+	}	
+	if (isset($this->request->post['config_tag_each'])) {
+		$this->data['config_tag_each'] = $this->request->post['config_tag_each'];
+	} elseif (isset($store_info['config_tag_each'])) {
+		$this->data['config_tag_each'] = $store_info['config_tag_each'];
+	} else {
+		$this->data['config_tag_each'] = 10;
+	}	
+	if (isset($this->request->post['config_discount_from'])) {
+		$this->data['config_discount_from'] = $this->request->post['config_discount_from'];
+	} elseif (isset($store_info['config_discount_from'])) {
+		$this->data['config_discount_from'] = $store_info['config_discount_from'];
+	} else {
+		$this->data['config_discount_from'] = 0;
+	}	
+	if (isset($this->request->post['config_use_stock_tags'])) {
+		$this->data['config_use_stock_tags'] = $this->request->post['config_use_stock_tags'];
+	} elseif (isset($store_info['config_use_stock_tags'])) {
+		$this->data['config_use_stock_tags'] = $store_info['config_use_stock_tags'];
+	} else {
+		$this->data['config_use_stock_tags'] = 0;
+	}
+	if (isset($this->request->post['config_stock_in'])) {
+		$this->data['config_stock_in'] = $this->request->post['config_stock_in'];
+	} elseif (isset($store_info['config_stock_in'])) {
+		$this->data['config_stock_in'] = $store_info['config_stock_in'];
+	} else {
+		$this->data['config_stock_in'] = 1;
+	}
+	if (isset($this->request->post['config_stock_out'])) {
+		$this->data['config_stock_out'] = $this->request->post['config_stock_out'];
+	} elseif (isset($store_info['config_stock_out'])) {
+		$this->data['config_stock_out'] = $store_info['config_stock_out'];
+	} else {
+		$this->data['config_stock_out'] = 0;
+	}
+	if (isset($this->request->post['config_stock_new'])) {
+		$this->data['config_stock_new'] = $this->request->post['config_stock_new'];
+	} elseif (isset($store_info['config_stock_new'])) {
+		$this->data['config_stock_new'] = $store_info['config_stock_new'];
+	} else {
+		$this->data['config_stock_new'] = 30;
+	}
+	if (isset($this->request->post['config_stock_left'])) {
+		$this->data['config_stock_left'] = $this->request->post['config_stock_left'];
+	} elseif (isset($store_info['config_stock_left'])) {
+		$this->data['config_stock_left'] = $store_info['config_stock_left'];
+	} else {
+		$this->data['config_stock_left'] = 5;
+	}
+
+	foreach ($this->data['languages'] as $language){
+		if (isset($this->request->post['config_stock_in_text_'.$language['code']])) {
+			$this->data['config_stock_in_text_'.$language['code']] = $this->request->post['config_stock_in_text_'.$language['code']];
+		} elseif (isset($store_info['config_stock_in_text_'.$language['code']])) {
+			$this->data['config_stock_in_text_'.$language['code']] = $store_info['config_stock_in_text_'.$language['code']];
+		} else {
+			$this->data['config_stock_in_text_'.$language['code']] = 'In stock';
+		}
+		if (isset($this->request->post['config_stock_out_text_'.$language['code']])) {
+			$this->data['config_stock_out_text_'.$language['code']] = $this->request->post['config_stock_out_text_'.$language['code']];
+		} elseif (isset($store_info['config_stock_out_text_'.$language['code']])) {
+			$this->data['config_stock_out_text_'.$language['code']] = $store_info['config_stock_out_text_'.$language['code']];
+		} else {
+			$this->data['config_stock_out_text_'.$language['code']] = 'Out of stock';
+		}
+		if (isset($this->request->post['config_stock_new_text_'.$language['code']])) {
+			$this->data['config_stock_new_text_'.$language['code']] = $this->request->post['config_stock_new_text_'.$language['code']];
+		} elseif (isset($store_info['config_stock_new_text_'.$language['code']])) {
+			$this->data['config_stock_new_text_'.$language['code']] = $store_info['config_stock_new_text_'.$language['code']];
+		} else {
+			$this->data['config_stock_new_text_'.$language['code']] = 'New';
+		}
+		if (isset($this->request->post['config_stock_left_text_'.$language['code']])) {
+				$this->data['config_stock_left_text_'.$language['code']] = $this->request->post['config_stock_left_text_'.$language['code']];
+		} elseif (isset($store_info['config_stock_left_text_'.$language['code']])) {
+			$this->data['config_stock_left_text_'.$language['code']] = $store_info['config_stock_left_text_'.$language['code']];
+		} else {
+			$this->data['config_stock_left_text_'.$language['code']] = 'Only @1 left';
+		}
+		if (isset($this->request->post['config_discount_text_'.$language['code']])) {
+			$this->data['config_discount_text_'.$language['code']] = $this->request->post['config_discount_text_'.$language['code']];
+		} elseif (isset($store_info['config_discount_text_'.$language['code']])) {
+			$this->data['config_discount_text_'.$language['code']] = $store_info['config_discount_text_'.$language['code']];
+		} else {
+			$this->data['config_discount_text_'.$language['code']] = '-@1%';
+		}
+	}	
+                        ]]></add>
+		</operation>
+                <operation>              
+                        <search position="after"><![CDATA[
+	$this->load->model('tool/image');
+                        ]]></search>
+                        <add><![CDATA[
+	if (isset($this->request->post['config_discount_image'])) {
+		$this->data['config_discount_image'] = $this->request->post['config_discount_image'];
+	} elseif (isset($store_info['config_discount_image'])) {
+		$this->data['config_discount_image'] = $store_info['config_discount_image'];			
+	} else {
+		$this->data['config_discount_image'] = '';
+	}
+	if (isset($store_info['config_discount_image']) && file_exists(DIR_IMAGE . $store_info['config_discount_image']) && is_file(DIR_IMAGE . $store_info['config_discount_image'])) {
+		$this->data['discount_image'] = $this->model_tool_image->resize($store_info['config_discount_image'], 100, 100);		
+	} else {
+		$this->data['discount_image'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+	}
+	if (isset($this->request->post['config_stock_image'])) {
+		$this->data['config_stock_image'] = $this->request->post['config_stock_image'];
+	} elseif (isset($store_info['config_stock_image'])) {
+		$this->data['config_stock_image'] = $store_info['config_stock_image'];			
+	} else {
+		$this->data['config_stock_image'] = '';
+	}
+	if (isset($store_info['config_stock_image']) && file_exists(DIR_IMAGE . $store_info['config_stock_image']) && is_file(DIR_IMAGE . $store_info['config_stock_image'])) {
+		$this->data['stock_image'] = $this->model_tool_image->resize($store_info['config_stock_image'], 100, 100);		
+	} else {
+		$this->data['stock_image'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+	}
+                        ]]></add>
+		</operation>
+
+	</file>
+
+	<file path="admin/view/template/setting/" name="store_form.tpl,setting.tpl">
+        	<operation>        
+                	<search position="ibefore"><![CDATA[
+	<a href="#tab-image"><?php echo $tab_image; ?></a>
+                        ]]></search>
+                        <add><![CDATA[
+	<a href="#tab-discount-tags"><?php echo $tab_discount_tags; ?></a>
+                        ]]></add>
+		</operation>
+
+                <operation>               
+                        <search position="before"><![CDATA[
+	<div id="tab-image">
+                        ]]></search>
+                        <add><![CDATA[
+	<div id="tab-discount-tags">
+		<table class="form">
+            		<tr>
+              			<td><?php echo $entry_use_discount_tags; ?></td>
+              			<td><?php if ($config_use_discount_tags) { ?>
+                			<input type="radio" name="config_use_discount_tags" value="1" checked="checked" />
+                			<?php echo $text_yes; ?>
+               		 		<input type="radio" name="config_use_discount_tags" value="0" />
+                			<?php echo $text_no; ?>
+                		<?php } else { ?>
+               	 			<input type="radio" name="config_use_discount_tags" value="1" />
+                			<?php echo $text_yes; ?>
+                			<input type="radio" name="config_use_discount_tags" value="0" checked="checked" />
+                			<?php echo $text_no; ?>
+                		<?php } ?></td>
+            		</tr>
+			<tr>
+              			<td><?php echo $entry_discount_image; ?></td>
+              			<td><div class="image"><img src="<?php echo $discount_image; ?>" alt="" id="thumb_discount_image" />
+                  		<input type="hidden" name="config_discount_image" value="<?php echo $config_discount_image; ?>" id="discount_image" />
+                  		<br />
+                  		<a onclick="image_upload('discount_image', 'thumb_discount_image');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb_discount_image').attr('src', '<?php echo $no_image; ?>'); $('#discount_image').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+            		</tr>
+            		<tr>
+              			<td><?php echo $entry_discount_count; ?></td>
+              			<td><input type="text" name="config_tag_count" value="<?php echo $config_tag_count; ?>" /></td>
+            		</tr>
+            		<tr>
+              			<td><?php echo $entry_discount_each; ?></td>
+              			<td><input type="text" name="config_tag_each" value="<?php echo $config_tag_each; ?>" /></td>
+            		</tr>
+            		<tr>
+              			<td><?php echo $entry_discount_from; ?></td>
+              			<td><input type="text" name="config_discount_from" value="<?php echo $config_discount_from; ?>" /></td>
+           		</tr>
+            		<tr>
+              			<td><?php echo $entry_use_stock_tags; ?></td>
+          	    		<td><?php if ($config_use_stock_tags) { ?>
+        	        		<input type="radio" name="config_use_stock_tags" value="1" checked="checked" />
+        	        		<?php echo $text_yes; ?>
+       	         			<input type="radio" name="config_use_stock_tags" value="0" />
+                			<?php echo $text_no; ?>
+                		<?php } else { ?>
+                			<input type="radio" name="config_use_stock_tags" value="1" />
+                			<?php echo $text_yes; ?>
+                			<input type="radio" name="config_use_stock_tags" value="0" checked="checked" />
+                			<?php echo $text_no; ?>
+                		<?php } ?></td>
+            		</tr>
+            		<tr>
+              			<td><?php echo $entry_stock_image; ?></td>
+              			<td><div class="image"><img src="<?php echo $stock_image; ?>" alt="" id="thumb_stock_image" />
+                  		<input type="hidden" name="config_stock_image" value="<?php echo $config_stock_image; ?>" id="stock_image" />
+                  		<br />
+                 		<a onclick="image_upload('stock_image', 'thumb_stock_image');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb_stock_image').attr('src', '<?php echo $no_image; ?>'); $('#stock_image').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+            		</tr>            
+	   	 	<tr>
+              			<td><?php echo $entry_stock_out; ?></td>
+              			<td><input type="text" name="config_stock_out" value="<?php echo $config_stock_out; ?>" /></td>
+            		</tr>
+            		<tr>
+              			<td><?php echo $entry_stock_new; ?></td>
+              			<td><input type="text" name="config_stock_new" value="<?php echo $config_stock_new; ?>" /></td>
+            		</tr>
+           		<tr>
+              			<td><?php echo $entry_stock_left; ?></td>
+              			<td><input type="text" name="config_stock_left" value="<?php echo $config_stock_left; ?>" /></td>
+            		</tr>
+            		<tr>
+              			<td><?php echo $entry_stock_in; ?></td>
+              			<td><input type="text" name="config_stock_in" value="<?php echo $config_stock_in; ?>" /></td>
+            		</tr>
+
+			<?php foreach ($languages as $language) { ?>
+            			<tr>
+					<td><strong><?php echo $language['name'].':'; ?></strong></td>
+            			<tr>
+					<td><?php echo $entry_discount_text; ?></td>
+              				<td><input type="text" name="config_discount_text_<?php echo $language['code']; ?>" value="<?php $val='config_discount_text_'.$language['code']; echo $$val;?>" /></td>	
+				</tr>
+            			<tr>
+					<td><?php echo $entry_stock_out_text; ?></td>
+              				<td><input type="text" name="config_stock_out_text_<?php echo $language['code']; ?>" value="<?php $val='config_stock_out_text_'.$language['code']; echo $$val;?>" /></td>	
+				</tr>
+            			<tr>
+					<td><?php echo $entry_stock_new_text; ?></td>
+              				<td><input type="text" name="config_stock_new_text_<?php echo $language['code']; ?>" value="<?php $val='config_stock_new_text_'.$language['code']; echo $$val;?>" /></td>	
+				</tr>
+            			<tr>
+					<td><?php echo $entry_stock_left_text; ?></td>
+              				<td><input type="text" name="config_stock_left_text_<?php echo $language['code']; ?>" value="<?php $val='config_stock_left_text_'.$language['code']; echo $$val;?>" /></td>	
+				</tr>
+
+<tr>
+					<td><?php echo $entry_stock_in_text; ?></td>
+              				<td><input type="text" name="config_stock_in_text_<?php echo $language['code']; ?>" value="<?php $val='config_stock_in_text_'.$language['code']; echo $$val;?>" /></td>	
+				</tr>
+
+				</tr>
+
+			<?php } ?>
+          	</table>
+        </div>
+
+                        ]]></add>
+		</operation>
+
+	</file>
+	<file path="catalog/controller/module/" name="bestseller.php,special.php,featured.php,latest.php">
+ 		<operation>	<!-- load settings -->                
+        		<search position="after"><![CDATA[
+	$this->data['products'] = array();
+                 	]]></search>
+                        <add><![CDATA[
+	if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/stylesheet/discount_tags.css'))
+        	$this->document->addStyle('catalog/view/theme/' . $this->config->get('config_template'). '/stylesheet/discount_tags.css');
+
+	if ($this->config->get('config_use_discount_tags')) {
+
+		$use_discount_tags = $this->config->get('config_use_discount_tags');
+	} else {
+		$use_discount_tags = 0;
+	}
+	if ($use_discount_tags){
+		if ($this->config->get('config_discount_text_'.$this->config->get('config_language'))) {
+			$text_discount_tag = $this->config->get('config_discount_text_'.$this->config->get('config_language'));
+		} else {
+			$text_discount_tag = '-@1%';
+		}
+
+		if ($this->config->get('config_tag_count')) {
+			$discount_count = $this->config->get('config_tag_count');
+		} else {
+			$discount_count = 5;
+		}
+		if ($this->config->get('config_tag_each')) {
+			$discount_each = $this->config->get('config_tag_each');
+			if ($discount_each==0)
+				$discount_each = 10;
+		} else {
+				$discount_each = 10;
+		}
+		if ($this->config->get('config_discount_from')) {
+			$discount_from = $this->config->get('config_discount_from');
+		} else {
+			$discount_from = 0;
+		}
+		if ($this->config->get('config_discount_image')) {
+			$discount_image = $this->config->get('config_discount_image');
+			if (file_exists(DIR_IMAGE . $discount_image) && is_file(DIR_IMAGE . $discount_image)){
+				$discount_image = 'image/'.$discount_image;
+				$discount_size = getimagesize($discount_image);
+				if (isset($discount_size) && $discount_count!=0) {
+					$discount_width=(int)($discount_size[0]/$discount_count);
+					$discount_height=$discount_size[1];
+				}
+				else{
+					$discount_width=0;
+					$discount_height=0;
+				}
+			}					
+			else{
+				$discount_image = '';
+				$discount_width=0;
+				$discount_height=0;
+			}
+		} else {
+			$discount_image = '';
+			$discount_width=0;
+			$discount_height=0;
+		}
+		$discount_width_text='style="width: '.$discount_width.'px;"';
+	}
+	if ($this->config->get('config_use_stock_tags')) {
+		$use_stock_tags = $this->config->get('config_use_stock_tags');
+	} else {
+		$use_stock_tags = 0;
+	}
+	if ($use_stock_tags){
+		if ($this->config->get('config_stock_in_text_'.$this->config->get('config_language'))) {
+			$text_stock_in = $this->config->get('config_stock_in_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_in = 'In stock';
+		}
+		if ($this->config->get('config_stock_out_text_'.$this->config->get('config_language'))) {
+			$text_stock_out = $this->config->get('config_stock_out_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_out = 'Out of stock';
+		}
+		if ($this->config->get('config_stock_new_text_'.$this->config->get('config_language'))) {
+			$text_stock_new = $this->config->get('config_stock_new_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_new = 'New';
+		}
+		if ($this->config->get('config_stock_left_text_'.$this->config->get('config_language'))) {
+			$text_stock_left = $this->config->get('config_stock_left_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_left = 'Only @1 left';
+		}
+		if ($this->config->get('config_stock_in')) {
+			$stock_in = $this->config->get('config_stock_in');
+		} else {
+			$stock_in = 0;
+		}
+		if ($this->config->get('config_stock_out')) {
+			$stock_out = $this->config->get('config_stock_out');
+		} else {
+			$stock_out = 0;
+		}
+		if ($this->config->get('config_stock_new')) {
+			$stock_new = $this->config->get('config_stock_new');
+		} else {
+			$stock_new = 0;
+		}
+		if ($this->config->get('config_stock_left')) {
+			$stock_left = $this->config->get('config_stock_left');
+		} else {
+			$stock_left = 0;
+		}
+		if ($this->config->get('config_stock_image')) {
+			$stock_image = $this->config->get('config_stock_image');
+			if (file_exists(DIR_IMAGE . $stock_image) && is_file(DIR_IMAGE . $stock_image)){
+				$stock_image = 'image/'.$stock_image;
+				$stock_size = getimagesize($stock_image);
+				if (isset($stock_size)) {
+					$stock_width=(int)($stock_size[0]/4);
+					$stock_height=$stock_size[1];
+				}
+				else{
+					$stock_width=0;
+					$stock_height=0;
+				}
+			} else {
+				$stock_image = '';
+				$stock_width=0;
+				$stock_height=0;
+			}
+		} else {
+			$stock_image = '';
+			$stock_width=0;
+			$stock_height=0;
+		}
+		$stock_width_text='style="width: '.$stock_width.'px;"';
+	}
+	$image_width='width: '.$setting['image_width'].'px;';
+                        ]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/controller/product/" name="product.php,category.php,search.php,manufacturer.php,special.php">
+ 		<operation>	<!-- load settings -->                
+                        <search position="after"><![CDATA[
+	$this->data['breadcrumbs'] = array();
+                        ]]></search>
+                        <add><![CDATA[
+		if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/stylesheet/discount_tags.css'))
+        	$this->document->addStyle('catalog/view/theme/' . $this->config->get('config_template'). '/stylesheet/discount_tags.css');
+
+	if ($this->config->get('config_use_discount_tags')) {
+
+		$use_discount_tags = $this->config->get('config_use_discount_tags');
+	} else {
+		$use_discount_tags = 0;
+	}
+	if ($use_discount_tags){
+		if ($this->config->get('config_discount_text_'.$this->config->get('config_language'))) {
+			$text_discount_tag = $this->config->get('config_discount_text_'.$this->config->get('config_language'));
+		} else {
+			$text_discount_tag = '-@1%';
+		}
+
+		if ($this->config->get('config_tag_count')) {
+			$discount_count = $this->config->get('config_tag_count');
+		} else {
+			$discount_count = 5;
+		}
+		if ($this->config->get('config_tag_each')) {
+			$discount_each = $this->config->get('config_tag_each');
+			if ($discount_each==0)
+				$discount_each = 10;
+		} else {
+				$discount_each = 10;
+		}
+		if ($this->config->get('config_discount_from')) {
+			$discount_from = $this->config->get('config_discount_from');
+		} else {
+			$discount_from = 0;
+		}
+		if ($this->config->get('config_discount_image')) {
+			$discount_image = $this->config->get('config_discount_image');
+			if (file_exists(DIR_IMAGE . $discount_image) && is_file(DIR_IMAGE . $discount_image)){
+				$discount_image = 'image/'.$discount_image;
+				$discount_size = getimagesize($discount_image);
+				if (isset($discount_size) && $discount_count!=0) {
+					$discount_width=(int)($discount_size[0]/$discount_count);
+					$discount_height=$discount_size[1];
+				}
+				else{
+					$discount_width=0;
+					$discount_height=0;
+				}
+			}					
+			else{
+				$discount_image = '';
+				$discount_width=0;
+				$discount_height=0;
+			}
+		} else {
+			$discount_image = '';
+			$discount_width=0;
+			$discount_height=0;
+		}
+		$discount_width_text='style="width: '.$discount_width.'px;"';
+	}
+	if ($this->config->get('config_use_stock_tags')) {
+		$use_stock_tags = $this->config->get('config_use_stock_tags');
+	} else {
+		$use_stock_tags = 0;
+	}
+	if ($use_stock_tags){
+		if ($this->config->get('config_stock_in_text_'.$this->config->get('config_language'))) {
+			$text_stock_in = $this->config->get('config_stock_in_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_in = 'In stock';
+		}
+		if ($this->config->get('config_stock_out_text_'.$this->config->get('config_language'))) {
+			$text_stock_out = $this->config->get('config_stock_out_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_out = 'Out of stock';
+		}
+		if ($this->config->get('config_stock_new_text_'.$this->config->get('config_language'))) {
+			$text_stock_new = $this->config->get('config_stock_new_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_new = 'New';
+		}
+		if ($this->config->get('config_stock_left_text_'.$this->config->get('config_language'))) {
+			$text_stock_left = $this->config->get('config_stock_left_text_'.$this->config->get('config_language'));
+		} else {
+			$text_stock_left = 'Only @1 left';
+		}
+		if ($this->config->get('config_stock_in')) {
+			$stock_in = $this->config->get('config_stock_in');
+		} else {
+			$stock_in = 0;
+		}
+		if ($this->config->get('config_stock_out')) {
+			$stock_out = $this->config->get('config_stock_out');
+		} else {
+			$stock_out = 0;
+		}
+		if ($this->config->get('config_stock_new')) {
+			$stock_new = $this->config->get('config_stock_new');
+		} else {
+			$stock_new = 0;
+		}
+		if ($this->config->get('config_stock_left')) {
+			$stock_left = $this->config->get('config_stock_left');
+		} else {
+			$stock_left = 0;
+		}
+		if ($this->config->get('config_stock_image')) {
+			$stock_image = $this->config->get('config_stock_image');
+			if (file_exists(DIR_IMAGE . $stock_image) && is_file(DIR_IMAGE . $stock_image)){
+				$stock_image = 'image/'.$stock_image;
+				$stock_size = getimagesize($stock_image);
+				if (isset($stock_size)) {
+					$stock_width=(int)($stock_size[0]/4);
+					$stock_height=$stock_size[1];
+				}
+				else{
+					$stock_width=0;
+					$stock_height=0;
+				}
+			} else {
+				$stock_image = '';
+				$stock_width=0;
+				$stock_height=0;
+			}
+		} else {
+			$stock_image = '';
+			$stock_width=0;
+			$stock_height=0;
+		}
+		$stock_width_text='style="width: '.$stock_width.'px;"';
+	}
+	$image_width='width: '.$this->config->get('config_image_product_width').'px;';
+                        ]]></add>
+		</operation>
+	</file>
+
+        <file name="catalog/view/theme/*/template/product/product.tpl">
+                <operation>               
+                        <search position="iafter"><![CDATA[
+	id="image" /></a>
+                        ]]></search>
+                        <add><![CDATA[
+	<!--<?php if (isset($discount_tag['discount'])){ ?>
+		<div class="discount_tag">
+			<a href="<?php echo $popup; ?>" title="<?php echo $heading_title; ?>" class="colorbox">
+				<div class="discount_image" style="<?php echo $discount_tag['discount']; ?>"></div><strong <?php echo $discount_tag['discount_width']; ?>><?php echo $discount_tag['discount_text']?></strong>
+			</a>
+		</div>
+	<?php } ?>
+	<?php if (isset($discount_tag['stock'])){ ?>
+		<div class="stock_tag">
+			<a href="<?php echo $popup; ?>" title="<?php echo $heading_title; ?>" class="colorbox">
+				<div class="stock_image" style="<?php echo $discount_tag['stock']; ?>"></div><strong <?php echo $discount_tag['stock_width']; ?>><?php echo $discount_tag['stock_text']?></strong>
+			</a>
+		</div>
+	<?php } ?>-->
+                        ]]></add>
+		</operation>
+
+	</file>
+	        
+	<file path="catalog/view/theme/*/template/product/" name="categorymasonrywidget.tpl,category.tpl,search.tpl,manufacturer_info.tpl,special.tpl">
+                <operation>	             
+                        <search position="iafter"><![CDATA[
+	<div class="image"><a href="<?php echo $product['href']; ?>">
+                        ]]></search>
+                        <add><![CDATA[
+	<?php if (isset($product['discount'])){ ?>
+		<div class="discount_tag">
+			<div class="discount_image" style="<?php echo $product['discount']; ?>"></div><strong <?php echo $product['discount_width']; ?>><?php echo $product['discount_text']?></strong>
+		</div>
+	<?php } ?>
+	<?php if (isset($product['stock'])){ ?>
+		<div class="stock_tag">
+			<div class="stock_image" style="<?php echo $product['stock']; ?>"></div><strong <?php echo $product['stock_width']; ?>><?php echo $product['stock_text']?></strong>
+		</div>
+	<?php } ?>
+                        ]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/view/theme/*/template/module/" name="bestseller.tpl,special.tpl,featured.tpl,latest.tpl">
+                <operation>            
+                        <search position="ibefore"><![CDATA[
+	<img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" />
+                        ]]></search>
+                        <add><![CDATA[
+	<?php if (isset($product['discount'])){ ?>
+		<div class="discount_tag">
+			<div class="discount_image" style="<?php echo $product['discount']; ?>"></div><strong <?php echo $product['discount_width']; ?>><?php echo $product['discount_text']?></strong>
+		</div>
+	<?php } ?>
+	<?php if (isset($product['stock'])){ ?>
+		<div class="stock_tag">
+			<div class="stock_image" style="<?php echo $product['stock']; ?>"></div><strong <?php echo $product['stock_width']; ?>><?php echo $product['stock_text']?></strong>
+		</div>
+	<?php } ?>
+                        ]]></add>
+		</operation>
+	</file> 	
+
+	<file path="catalog/view/theme/*/template/" name="module/bestseller.tpl,module/special.tpl,module/featured.tpl,module/latest.tpl,product/category.tpl,product/search.tpl,product/manufacturer_info.tpl,product/special.tpl">
+                <operation>	          
+                        <search position="iafter"><![CDATA[
+	<div class="name"><a href="<?php echo $product['href']; ?>"
+                        ]]></search>
+                        <add><![CDATA[
+style="<?php echo $product['image_width']; ?>"
+                        ]]></add>
+		</operation>
+	</file>
+
+	<file name="catalog/controller/product/product.php">
+	 	<operation>              
+                        <search position="before"><![CDATA[
+	if ($product_info['quantity'] <= 0) {
+                        ]]></search>
+                        <add><![CDATA[
+	if ($use_discount_tags && isset($product_info['special'])){
+		$discount_tag_text=100-(((float)$product_info['special']/(float)$product_info['price'])*100);
+		$index=($discount_tag_text-$discount_from)/$discount_each;
+		if ($index>=$discount_count)
+			$index=$discount_count-1;
+		if ($discount_tag_text>=$discount_from){
+			$discount_tag_text=str_replace("@1", (int)$discount_tag_text, $text_discount_tag);
+			$tag_1=((int)($index))*$discount_width;
+			$discount_tag='background-image: url('.$discount_image.');'.'background-position: -'.$tag_1.'px 0px;width: '.$discount_width.'px;height: '.$discount_height.'px;';
+		}
+		else{
+			$discount_tag=NULL;	
+			$discount_tag_text=NULL;
+		}
+	}	
+	else{
+		$discount_tag=NULL;	
+		$discount_tag_text=NULL;
+	}
+
+	$stock_tag = NULL;
+	$stock_tag_text = NULL;
+	if ($use_stock_tags){
+		$stock_tag_x = 0;
+		$stock_quantity=$product_info['quantity'];
+		if ($stock_quantity <= $stock_out) {
+			$stock_tag_text = $text_stock_out;		
+		}
+		elseif ($stock_new>0) {
+			$diff=ceil((strtotime($product_info['date_available']."+ ".$stock_new." days")-time())/60/60/24);
+			if ($diff>0){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_new);
+				$stock_tag_x = $stock_width;
+			}		
+		}
+		if($stock_tag_text==NULL){
+			if ($stock_quantity <= $stock_left && $stock_quantity>0){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_left);
+				$stock_tag_x = $stock_width*2;
+			}
+			elseif ($stock_quantity >= $stock_in){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_in);
+				$stock_tag_x = $stock_width*3;
+			}
+		}
+		if ($stock_tag_text!=NULL)
+			$stock_tag='background-image: url('.$stock_image.');'.'background-position: -'.$stock_tag_x.'px 0px;width: '.$stock_width.'px;height: '.$stock_height.'px;';
+	}
+	$this->data['discount_tag'] = array(
+				'stock' 		=> $stock_tag,
+				'stock_text' 		=> $stock_tag_text,
+				'stock_width'		=> $stock_width_text,
+				'discount'              => $discount_tag,
+				'discount_text'         => $discount_tag_text,
+				'discount_width'	=> $discount_width_text
+			);
+                        ]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/controller/" name="product/category.php,product/search.php,product/manufacturer.php,product/special.php,module/bestseller.php,module/special.php,module/latest.php">
+		<operation>        
+                        <search position="replace"><![CDATA[
+	$this->data['products'][] = array(
+                        ]]></search>
+                        <add><![CDATA[			
+	if ($use_discount_tags && isset($result['special'])){
+		$discount_tag_text=100-(((float)$result['special']/(float)$result['price'])*100);
+		$index=($discount_tag_text-$discount_from)/$discount_each;
+		if ($index>=$discount_count)
+			$index=$discount_count-1;
+		if ($discount_tag_text>=$discount_from){
+			$discount_tag_text=str_replace("@1", (int)$discount_tag_text, $text_discount_tag);
+			$tag_1=((int)($index))*$discount_width;
+			$discount_tag='background-image: url('.$discount_image.');'.'background-position: -'.$tag_1.'px 0px;width: '.$discount_width.'px;height: '.$discount_height.'px;';
+		}
+		else{
+			$discount_tag=NULL;	
+			$discount_tag_text=NULL;
+		}
+	}	
+	else{
+		$discount_tag=NULL;	
+		$discount_tag_text=NULL;
+	}
+	$stock_tag = NULL;
+	$stock_tag_text = NULL;
+	if ($use_stock_tags){
+		$stock_tag_x = 0;
+		$stock_quantity=$result['quantity'];
+		if ($stock_quantity <= $stock_out) {
+			$stock_tag_text = $text_stock_out;		
+		}
+		elseif ($stock_new>0) {
+			$diff=ceil((strtotime($result['date_available']."+ ".$stock_new." days")-time())/60/60/24);
+			if ($diff>0){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_new);
+				$stock_tag_x = $stock_width;
+			}		
+		}
+		if($stock_tag_text==NULL){
+			if ($stock_quantity <= $stock_left && $stock_quantity>0){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_left);
+				$stock_tag_x = $stock_width*2;
+			}
+			elseif ($stock_quantity >= $stock_in){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_in);
+				$stock_tag_x = $stock_width*3;
+			}
+		}
+		if ($stock_tag_text!=NULL)
+			$stock_tag='background-image: url('.$stock_image.');'.'background-position: -'.$stock_tag_x.'px 0px;width: '.$stock_width.'px;height: '.$stock_height.'px;';
+	}
+	$this->data['products'][] = array(
+				'stock' 		=> $stock_tag,
+				'stock_text' 		=> $stock_tag_text,
+				'stock_width'		=> $stock_width_text,
+				'discount'              => $discount_tag,
+				'discount_text'         => $discount_tag_text,
+				'discount_width'	=> $discount_width_text,
+				'image_width' 		=> $image_width,
+                        ]]></add>
+		</operation>		
+	</file> 
+
+
+	<file path="catalog/controller/module/" name="featured.php">
+		<operation>          
+                        <search position="replace"><![CDATA[
+	$this->data['products'][] = array(
+                        ]]></search>
+                        <add><![CDATA[
+	if ($use_discount_tags && isset($product_info['special'])){
+		$discount_tag_text=100-(((float)$product_info['special']/(float)$product_info['price'])*100);
+		$index=($discount_tag_text-$discount_from)/$discount_each;
+		if ($index>=$discount_count)
+			$index=$discount_count-1;
+		if ($discount_tag_text>=$discount_from){
+			$discount_tag_text=str_replace("@1", (int)$discount_tag_text, $text_discount_tag);
+			$tag_1=((int)($index))*$discount_width;
+			$discount_tag='background-image: url('.$discount_image.');'.'background-position: -'.$tag_1.'px 0px;width: '.$discount_width.'px;height: '.$discount_height.'px;';
+		}
+		else{
+			$discount_tag=NULL;	
+			$discount_tag_text=NULL;
+		}
+	}	
+	else{
+		$discount_tag=NULL;	
+		$discount_tag_text=NULL;
+	}
+	$stock_tag = NULL;
+	$stock_tag_text = NULL;
+	if ($use_stock_tags){
+		$stock_tag_x = 0;
+		$stock_quantity=$product_info['quantity'];
+		if ($stock_quantity <= $stock_out) {
+			$stock_tag_text = $text_stock_out;			
+		}
+		elseif ($stock_new>0) {
+			$diff=ceil((strtotime($product_info['date_available']."+ ".$stock_new." days")-time())/60/60/24);
+			if ($diff>0){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_new);
+				$stock_tag_x = $stock_width;
+			}		
+		}
+		if($stock_tag_text==NULL){
+			if ($stock_quantity <= $stock_left && $stock_quantity>0){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_left);
+				$stock_tag_x = $stock_width*2;
+			}
+			elseif ($stock_quantity >= $stock_in){
+				$stock_tag_text = str_replace("@1", $stock_quantity, $text_stock_in);
+				$stock_tag_x = $stock_width*3;
+			}
+		}
+		if ($stock_tag_text!=NULL)
+			$stock_tag='background-image: url('.$stock_image.');'.'background-position: -'.$stock_tag_x.'px 0px;width: '.$stock_width.'px;height: '.$stock_height.'px;';
+	}
+	$this->data['products'][] = array(
+				'stock' 		=> $stock_tag,
+				'stock_text' 		=> $stock_tag_text,
+				'stock_width'		=> $stock_width_text,
+				'discount'              => $discount_tag,
+				'discount_text'         => $discount_tag_text,
+				'discount_width'	=> $discount_width_text,
+				'image_width' 		=> $image_width,
+                        ]]></add>
+		</operation>		
+	</file>
+</modification>

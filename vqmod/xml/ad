@@ -1,0 +1,64 @@
+<modification>
+	<id>Product PDF</id>
+	<version>1.5.x</version>
+	<vqmver>2.2.1</vqmver>
+	<author>Adam CZechBoY Žurek adamzurek@jabko.net</author>
+	<file name="catalog/view/theme/*/template/product/product.tpl">
+		<operation>
+			<search position="before"><![CDATA[<?php if ($manufacturer) { ?>]]></search>
+			<add><![CDATA[<a href="<?php echo $print_pdf; ?>" class="btnPrint" title="PDF generate"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAnFJREFUeNqMUj9ME3EU/u5PaapW+scWrSiELhhGFsNAoOnC4ICjSSeG6iqkCxEWBxxsiJOrJA2M4gbETgwkmuaa0MQEYxtEaG3SP5r2KL27+t6PuwYX4y/57r1793vf+957J30GsLayAkmSHpF7B/8+WcuyvlqmiV6vhy/7+5CY4Hh0FJlEIrmxuvr2gj52GZYFky7xRT6apmFjb++pIDHNIycu5YDX14DnCr8QTIJB6BIuCAqpcyeTyOfzeDI3h8fLy88o/JEIjgRBAejdJMdNkO3Ec4JOaBHahFunp8hms/0+3mQyL8i8ZF81rlSVXS7c7nRwPDYGq1SCZcdVWUYsFhPteL1e7Gha3SGTDVsqVzXHx9EtFDAQj/dbYDugqoKEBi2SDNOUCGwhd65IVqamUE2n4VtYgHtmBh2bRDs8xI+zM5RIFZOYhiER2EI+t3v1zM8jlErh+uwsQBt4sLWF4aUlQRKNRhEMBhGJRKBcEsgOgarbMh+ur6O8vY2fu7uo5XL4XamIdXKBRqMh+m+327g7NASDCJwZqFyB8WFkRAR69lAt2+cWAoGAIPD7/XDRLIhA6g+RLqR5VU0Cj7Zm24YNdyKBZrOJcrkslIgWul2ZwBYqVVoshsOL72Ox1KfNzVffarVLJfZfODw4SCOxYJHP4NJ/tbATCkGbnuaoWFKxWOzL5Z7v+3ykUxaDFZLpltNCq1qF+o4e905O4PH7VQ7GJycFAVfjGbAV5WwSztRbLVWv1/H94EB885ATbtbrbkcW71qmBK6mkGWoigKVfiiFLN/lHM7lqh5C+Fel0rgxMbGG/ziWrvN8mcD4I8AAqr9GzMgbgGcAAAAASUVORK5CYII=">
+ <?php echo $text_product_pdf; ?></a><br />]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="after"><![CDATA[if ($product_info) {]]></search>
+			<add><![CDATA[$this->data['print_pdf'] = $this->url->link('product/pdf', 'product_id=' . $product_id);
+						$this->data['text_product_pdf'] = $this->language->get('text_product_pdf');
+]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/language/czech/product/product.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['text_attributes'] = 'Technická data';
+			$_['text_product_pdf'] = 'Vygenerovat PDF';
+			]]></add>
+		</operation>
+	</file>
+	<file name="catalog/language/english/product/product.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['text_attributes'] = 'Technical data';
+			$_['text_product_pdf'] = 'Generate PDF';
+]]></add>
+		</operation>
+	</file>
+	<file name="catalog/language/russian/product/product.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['text_attributes'] = 'Tехнические данные';
+			$_['text_product_pdf'] = 'Создать PDF';
+]]></add>
+		</operation>
+	</file>
+		<file name="catalog/language/spanish/product/product.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['text_attributes'] = 'datos técnicos';
+			$_['text_product_pdf'] = 'Generar PDF';
+]]></add>
+		</operation>
+	</file>
+
+	<file name="catalog/language/slovak/product/product.php" error="skip">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['text_attributes'] = 'Technické dáta';
+			$_['text_product_pdf'] = 'Generovať PDF';
+]]></add>
+		</operation>
+	</file>
+
+</modification>

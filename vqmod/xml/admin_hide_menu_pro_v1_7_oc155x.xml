@@ -1,0 +1,224 @@
+<modification>
+	<id>Admin Hide Menu Pro</id>
+	<version>1.7.0</version>
+	<vqmver>2.2.2</vqmver>
+	<author>madimar - info@opencartzoom.com</author>
+
+
+	<file name="system/library/user.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+  	public function getUserName() {
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+  	public function getPermission() {
+    	return $this->permission;
+  	}
+// madimar mod end
+            ]]></add>
+        </operation>		
+		
+	</file>		
+	
+	<file name="admin/controller/common/header.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+		$this->template = 'common/header.tpl';
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['permissions'] = $this->user->getPermission();
+		$this->data['admin_menu_enable_items'] = isset($this->data['permissions']['access']) ? $this->data['permissions']['access'] : array();
+// madimar mod end
+            ]]></add>
+        </operation>		
+		
+	</file>	
+
+	<file name="admin/controller/extension/*.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+		$this->response->setOutput($this->render());
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+		$this->data['permissions'] = $this->user->getPermission();
+		$this->data['admin_menu_enable_items'] = isset($this->data['permissions']['access']) ? $this->data['permissions']['access'] : array();
+// madimar mod end
+            ]]></add>
+        </operation>		
+		
+	</file>		
+
+	<file name="admin/view/template/common/header.tpl">
+
+		<operation>
+            <search position="bottom"><![CDATA[
+            ]]></search>
+            <add><![CDATA[
+<script type="text/javascript"><!--
+$(document).ready(function(){ 
+
+	$('#catalog').hide();
+	$('#extension').hide();	
+	$('#sale').hide();
+	$('#system').hide();	
+	$('#reports').hide();
+
+	$('#catalog li').hide();
+	$('#extension li').hide();	
+	$('#sale li').hide();
+	$('#system li').hide();	
+	$('#reports li').hide();
+	
+<?php foreach ($admin_menu_enable_items as $item) { ?>
+    $("li:has(a[href*='<?php echo $item . "&"; ?>'])").show();
+<?php } ?>
+
+});
+ //--></script> 
+            ]]></add>
+        </operation>		
+		
+	</file>	
+
+	<file name="admin/view/template/extension/module.tpl">
+
+		<operation>
+            <search position="before"><![CDATA[
+<?php echo $footer; ?>
+            ]]></search>
+            <add><![CDATA[
+<script type="text/javascript"><!--
+
+$(document).ready(function(){ 
+
+	$('.list tbody tr td').hide();	
+	
+<?php foreach ($admin_menu_enable_items as $item) { ?>
+	<?php if (strpos($item,'module/') !== false) { ?>
+	<?php $arr = explode("/", $item); ?>
+	$(".list tbody tr td:has(a[href*='<?php echo $arr[1]; ?>'])").show().prev().show().prev().show().prev().show();
+	<?php } ?>	
+<?php } ?>
+
+});
+//--></script> 
+            ]]></add>
+        </operation>		
+		
+	</file>		
+
+	<file name="admin/view/template/extension/shipping.tpl">
+
+		<operation>
+            <search position="before"><![CDATA[
+<?php echo $footer; ?>
+            ]]></search>
+            <add><![CDATA[
+<script type="text/javascript"><!--
+
+$(document).ready(function(){ 
+
+	$('.list tbody tr td').hide();	
+	
+<?php foreach ($admin_menu_enable_items as $item) { ?>
+	<?php if (strpos($item,'shipping/') !== false) { ?>
+	<?php $arr = explode("/", $item); ?>
+	$(".list tbody tr td:has(a[href*='<?php echo $arr[1]; ?>'])").show().prev().show().prev().show().prev().show();
+	<?php } ?>	
+<?php } ?>
+
+});
+//--></script> 
+            ]]></add>
+        </operation>		
+		
+	</file>		
+
+	<file name="admin/view/template/extension/payment.tpl">
+
+		<operation>
+            <search position="before"><![CDATA[
+<?php echo $footer; ?>
+            ]]></search>
+            <add><![CDATA[
+<script type="text/javascript"><!--
+
+$(document).ready(function(){ 
+
+	$('.list tbody tr td').hide();	
+	
+<?php foreach ($admin_menu_enable_items as $item) { ?>
+	<?php if (strpos($item,'payment/') !== false) { ?>
+	<?php $arr = explode("/", $item); ?>
+	$(".list tbody tr td:has(a[href*='<?php echo $arr[1]; ?>'])").show().prev().show().prev().show().prev().show().prev().show();
+	<?php } ?>	
+<?php } ?>
+
+});
+//--></script> 
+            ]]></add>
+        </operation>		
+		
+	</file>
+
+	<file name="admin/view/template/extension/total.tpl">
+
+		<operation>
+            <search position="before"><![CDATA[
+<?php echo $footer; ?>
+            ]]></search>
+            <add><![CDATA[
+<script type="text/javascript"><!--
+
+$(document).ready(function(){ 
+
+	$('.list tbody tr td').hide();	
+	
+<?php foreach ($admin_menu_enable_items as $item) { ?>
+	<?php if (strpos($item,'total/') !== false) { ?>
+	<?php $arr = explode("/", $item); ?>
+	$(".list tbody tr td:has(a[href*='<?php echo $arr[1]; ?>'])").show().prev().show().prev().show().prev().show();
+	<?php } ?>	
+<?php } ?>
+
+});
+//--></script> 
+            ]]></add>
+        </operation>		
+		
+	</file>
+
+	<file name="admin/view/template/extension/feed.tpl">
+
+		<operation>
+            <search position="before"><![CDATA[
+<?php echo $footer; ?>
+            ]]></search>
+            <add><![CDATA[
+<script type="text/javascript"><!--
+
+$(document).ready(function(){ 
+
+	$('.list tbody tr td').hide();	
+	
+<?php foreach ($admin_menu_enable_items as $item) { ?>
+	<?php if (strpos($item,'feed/') !== false) { ?>
+	<?php $arr = explode("/", $item); ?>
+	$(".list tbody tr td:has(a[href*='<?php echo $arr[1]; ?>'])").show().prev().show().prev().show();
+	<?php } ?>	
+<?php } ?>
+
+});
+//--></script> 
+            ]]></add>
+        </operation>		
+		
+	</file>
+	
+</modification>

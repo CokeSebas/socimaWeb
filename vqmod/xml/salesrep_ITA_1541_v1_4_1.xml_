@@ -1,0 +1,112 @@
+<modification>
+	<id>Sales Rep for OC 1.5.4.x - Italian language pack</id>
+	<version>1.4.1</version>
+	<vqmver>2.1.7</vqmver>
+	<author>madimar</author>
+
+<!-- ADMIN  -->
+	<file name="admin/language/italian/common/header.php">
+		<operation>
+            <search position="after"><![CDATA[
+$_['text_customer_group']
+            ]]></search>
+            <add><![CDATA[
+$_['text_salesrep']    = 'Agenti';
+// v1.3
+$_['text_report_sale_salesrep']    = 'Agenti';
+            ]]></add>
+        </operation>
+	</file>	
+
+	<file name="admin/language/italian/sale/customer.php">
+
+		<operation>
+            <search position="after"><![CDATA[
+$_['column_customer_group']
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+	$_['column_salesrep']   = 'Agente';
+// madimar mod end
+            ]]></add>
+        </operation>	
+	
+		<operation>
+            <search position="after"><![CDATA[
+$_['entry_zone']
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['text_none']        = '-- Nessuno --';
+$_['entry_salesrep']        = 'Agente:';
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>
+	
+	<file name="admin/language/italian/sale/order.php">
+		<operation>
+            <search position="before"><![CDATA[
+?>
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['entry_salesrep']        = 'Agente:';
+$_['button_save']        = 'Salva';
+$_['column_salesrep']   = 'Agente';
+// madimar mod fine
+            ]]></add>
+        </operation>
+	</file>		
+
+	<file name="catalog/language/italian/account/register.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+?>
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['entry_your_salesrep']        = 'Per favore seleziona il tuo agente commerciale (se assegnato):';	
+$_['text_your_salesrep']        = 'Il tuo agente:';
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>		
+	
+	<file name="catalog/language/italian/checkout/checkout.php">
+
+		<operation>
+            <search position="before"><![CDATA[
+?>
+            ]]></search>
+            <add><![CDATA[
+// madimar mod
+$_['entry_your_salesrep']        = 'Per favore seleziona il tuo agente commerciale (se assegnato):';	
+$_['text_your_salesrep']        = 'Il tuo agente:';
+// madimar mod end
+            ]]></add>
+        </operation>
+		
+	</file>		
+	
+	<file name="admin/language/italian/sale/contact.php">
+		<operation>
+            <search position="before"><![CDATA[
+?>
+			]]></search>
+            <add><![CDATA[
+			// madimar mod
+$_['text_customer_mine']    = 'I miei clienti';
+$_['text_salesrep']    = 'Agente';
+$_['text_salesrep_all']    = 'Tutti gli agenti';
+$_['entry_salesrep']    = 'Nome Agente:';
+			// madimar mod end
+            ]]></add>
+        </operation>
+	
+	</file>			
+		
+</modification>

@@ -1,0 +1,77 @@
+<modification>
+	<id>Remove Category menus</id>
+	<version>1.0.0</version>
+	<vqmver>1.0.0</vqmver>
+	<author>Abhishek</author>
+
+	<file name="admin/controller/common/header.php">
+		<operation>
+			<search position="before"><![CDATA[$results = $this->model_setting_store->getStores();]]></search>
+			<add><![CDATA[			
+			$this->load->model('user/user');
+			$this->load->model('user/user_group');
+			
+			$user_details = $this->model_user_user->getUser($this->user->getId());
+			$user_group = $this->model_user_user_group->getUserGroup($user_details['user_group_id']);
+			$this->data['permission_set'] = isset($user_group['permission']['access']) ? $user_group['permission']['access'] : array();
+
+			]]></add>
+		</operation>
+
+	</file>	
+	
+	<file name="admin/view/template/common/header.tpl">
+		<operation>
+			<search position="after"><![CDATA[<script type="text/javascript">]]></search>
+			<add><![CDATA[
+	
+
+$(document).ready(function() {
+	
+	var permission_set = new Array();
+	<?php $i = 0; 
+	foreach ($permission_set as $permission) { ?>
+		permission_set[<?php echo $i++; ?>] = "<?php echo $permission; ?>";
+	<?php } ?>
+
+	
+	$('#menu > ul > li').each( function () {
+		
+		$("ul li a", this).each( function () {
+			if (typeof($(this).attr('href')) != 'undefined') {
+				var route=$(this).attr('href').replace(/^http.*route=/, '').replace(/&.*$/,'');
+				if ($.inArray(route, permission_set) !== -1) {
+					overall_permission = true;
+				} else {
+					$(this).parent().remove();
+				}
+			}			
+		});
+		
+		removeParent(this);
+	
+	});
+	
+	$('#menu > ul.left > li').each( function () {
+		
+		if (typeof($("a", this).attr('href')) == 'undefined' && $("ul li", this).length == 0)
+			$(this).remove();
+		
+	});
+	
+});
+
+function removeParent(menu) {
+
+	$("ul > li > a.parent", menu).each( function () {
+		var parent_container = $(this).parent();
+		removeParent(parent_container);
+		if ($("ul li", parent_container).length == 0)
+			$(parent_container).remove();
+	});
+}
+
+			]]></add>
+		</operation>
+	</file>
+</modification>

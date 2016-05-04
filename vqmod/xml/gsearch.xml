@@ -1,0 +1,21 @@
+<!-- Created using vQmod XML Generator by UKSB - http://uksb.github.com/vqgen/ //-->
+<!--//==============================================================================
+// gSearch - Ajax Search, Auto Complete Search, Auto Suggestion
+// Author: Onjection Solutions
+// E-mail: gaurav@onjection.com
+// Website: http://www.onjection.com
+//==============================================================================   -->
+
+<modification>
+	<id><![CDATA[gsearch]]></id>
+	<version><![CDATA[1.2]]></version>
+	<vqmver><![CDATA[1.0]]></vqmver>
+	<author><![CDATA[ONjection]]></author>
+	<file  name="catalog/view/theme/*/template/common/header.tpl">
+		<operation info="Add autosearch div and javascript file">
+			<search position="before" error="log"><![CDATA[</head>]]></search>
+			<add><![CDATA[<script type="text/javascript" src="catalog/view/javascript/ajaxsearch.js"></script>]]></add>
+		</operation>
+		
+	</file>
+</modification>
