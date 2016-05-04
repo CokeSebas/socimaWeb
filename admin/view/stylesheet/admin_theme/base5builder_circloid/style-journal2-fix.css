@@ -1,0 +1,40 @@
+.header > .logo{
+
+	background: transparent !important;
+
+	height: 50px !important;
+
+	margin-top: -12px !important;
+
+}
+
+.container-fluid{
+
+	padding: 0 !important;
+
+}
+
+.main-body{
+
+	margin-top: 0 !important;
+	background: #FFFFFF;
+
+}
+
+ul.mainnav > li > ul{
+
+	z-index: 9999 !important;
+
+}
+
+#right-column > #content{
+
+	overflow: hidden !important;
+
+}
+
+.fixed .module-buttons{
+
+	right: 110px !important;
+
+}

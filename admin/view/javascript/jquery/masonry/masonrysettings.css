@@ -1,0 +1,90 @@
+.item { 
+    margin-bottom: 10px;
+    width: auto; 
+    float:left;
+
+}
+#item-container
+{
+    margin:0px auto;
+    width:100%;
+    position:relative;
+    z-index:2;
+
+}
+#infscr-loading
+{
+    background: none repeat scroll 0 0 #000000;
+    border-radius: 10px;
+    bottom: 40px;
+    color: #FFFFFF;
+    left: 45%;
+    opacity: 0.8;
+    padding: 10px;
+    position: fixed;
+    text-align: center;
+    width: 230px;
+    z-index: 100;
+
+}
+.item .image {
+    display: block;
+    margin-bottom: 0;
+
+}
+.item .image img {
+    border: 1px solid #E7E7E7;
+    padding: 3px;
+    float: left;
+}
+.item .name a {
+    color: #4D4D4D;
+    display: block;
+    font-weight: normal;
+    margin-bottom: 4px;
+    text-decoration: none;
+    font-size: 13px;
+}
+.item .rating {
+    display: block;
+    margin-bottom: 4px;
+}
+.item .price {
+    display: block;
+	color: #333333;
+	margin-bottom: 4px;
+	margin-top:5px;
+	font-size: 17px;
+}
+.item .price-old {
+    color: #FF0000;
+    text-decoration: line-through;
+}
+.item .price-new {
+    font-weight: bold;
+}
+.item .price .price-tax {
+    display: none;
+}
+.item .cart {
+    margin-bottom: 3px;
+}
+.item .wishlist, .item .compare {
+	margin-top: 3px;
+    margin-bottom: 3px;
+}
+.item .wishlist a {
+    background: url("../../../theme/default/image/add.png") no-repeat scroll left center rgba(0, 0, 0, 0);
+    color: #333333;
+    display: block;
+    padding-left: 18px;
+    text-decoration: none;
+	margin-top:8px;
+}
+.item .compare a {
+    background: url("../../../theme/default/image/add.png") no-repeat scroll left center rgba(0, 0, 0, 0);
+    color: #333333;
+    display: block;
+    padding-left: 18px;
+    text-decoration: none;
+}

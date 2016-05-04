@@ -1,0 +1,91 @@
+.nomargin{
+    margin: 0 !important;
+}
+
+.show_masonry_options{
+    margin-top: 5px;
+    background: #F9F9F9;
+    border: 1px solid #CCC;
+    display: none;
+}
+
+#masonry_search_page .content,
+#masonry_category_page .content{
+    min-height: 80px !important;
+    
+    box-shadow: 0 15px 10px -12px #333;
+    -moz-box-shadow: 0 10px 7px -5px #333;
+    -moz-box-shadow: 0 10px 7px -5px #333;
+}
+
+#masonry_search_page .content .error,
+#masonry_category_page .content .error{
+    margin-left: 10px;
+}
+
+.masonry_setting_box{
+    float: left;
+    width: 40%;
+    margin: 20px;
+}
+
+.masonry_setting_box table.form > tbody > tr > td:first-child{
+    width: 250px !important;
+}
+
+.masonry_setting_box td{
+    font-size: 18px !important;
+    color: #888 !important;
+    font-style: italic;
+    border: none !important;
+}
+
+.masonry_setting_box span.help{font-size: 10px; font-style: normal;}
+
+.masonry_setting_box .switch-button-label{
+    color: #709923 !important;
+    margin-top: 3px;
+    font-size: 18px;
+    font-style: normal;
+}
+
+.masonry_setting_box .imageSize{
+    font-size: 18px;
+    font-style: normal;
+}
+
+.masonry_setting_box .selectSizeWidth,
+.masonry_setting_box .selectSizeHeight{
+    color: #666;
+    font-size: 14px;
+    margin: 0 10px;
+    padding: 5px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+#formAction{
+    float: right;
+}
+
+#masonry_submit_button{
+    width: 150px;
+    padding: 15px;
+    margin: 50px 10px 0 0; 
+    font-size: 20px;
+    color: #FFF;
+    font-family: Arial;
+    text-shadow: 1px 1px 1px #333;
+    background: #257CB2;
+    border: 1px solid #21618C;
+    
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    
+    box-shadow: 0 10px 7px -7px #333;
+    -moz-box-shadow: 0 10px 7px -7px #333;
+    -moz-box-shadow: 0 10px 7px -7px #333;
+}

@@ -1,0 +1,197 @@
+.oca-general {
+	float: left;
+	width: 29%;
+}
+.oca-general table {
+	width: 100%;
+}
+.oca-general td + td {
+	text-align: right;
+}
+.oca-general .oca-table-noborder .left {
+	text-align: left;
+	padding: 4px;
+}
+.oca-general .oca-table-noborder .right {
+	text-align: right;
+	padding: 4px;
+}
+.oca-information {
+	float: right;
+	width: 69%;
+}
+.oca-information table {
+	width: 100%;
+}
+.oca-information .htabs a {
+	text-decoration: none;
+}
+.oca-information .oca-input {
+	background: #FFF;
+	padding: 10px;
+	margin-bottom: 10px;
+	text-align: left;
+}
+.oca-tip {
+	padding-left: 20px;
+	color: #666;
+	font-size: 11px;
+	font-weight: normal;
+	font-family: Verdana, Geneva, sans-serif;
+	font-style: italic;
+	display: block;
+}
+.oca-remove {
+	float: right;
+	color: #FFF;
+	vertical-align: middle;
+	padding-right: 2px;
+}
+.oca-rate{
+	clear: both;
+	margin-bottom: 10px;	
+}
+.oca-rate tbody td {
+	background: #FFF;
+}
+.oca-footer { 	
+	text-align: right;
+}
+.oca-entry {
+	background: #E4EEF7;
+	color: #000; 
+	border-top: 1px solid #DDD; 
+	border-bottom: 1px solid #DDD;
+	padding: 5px; 
+	font-size: 12px; 
+	font-weight: bold;	
+}
+.oca-input {
+	background: #FFF;
+	padding: 2px;
+}
+.oca-head {
+	/*background: #EFEFEF;*/
+	background: url('../image/oca_header.gif');
+	border: 1px solid #DDDDDD;
+	font-weight: bold;
+	padding: 8px;
+	margin: 0;
+	cursor: pointer;
+}
+.oca-content {
+	border: 1px solid #DDDDDD;
+	border-right: 0;
+	border-top: 0;
+	text-align: center;
+	margin-bottom: 10px;
+}
+.oca-header {
+	background: url('../image/oca_header.gif');
+	border: 1px solid #DDDDDD;
+	font-weight: bold;
+	padding: 8px;
+	margin: 0;
+}
+.oca-box {
+	border: 1px solid #DDDDDD;
+	text-align: center;
+	margin-bottom: 10px;
+	width: 100%;
+	height: 400px;
+	overflow: auto;
+}
+/*Tables*/
+.oca-table {
+	border-collapse: collapse;
+	width: 100%;
+}
+.oca-table td {
+	border-right: 1px solid #DDDDDD;
+}
+.oca-table thead td {
+	background-color: #E4EEF7;
+	padding: 0px 5px;
+}
+.oca-table thead td a, .oca-table thead td {
+	text-decoration: none;
+	color: #222222;
+	font-weight: bold;
+}
+.oca-table tbody td a {
+	text-decoration: underline;
+}
+.oca-table tbody td {
+	vertical-align: middle;
+	padding: 0px 5px;
+	background: #FFFFFF;
+}
+.oca-table .left {
+	text-align: left;
+	padding: 7px;
+}
+.oca-table .right {
+	text-align: right;
+	padding: 7px;
+}
+.oca-table .center {
+	text-align: center;
+	padding: 7px;
+}
+.oca-table-noborder {
+	border-collapse: collapse;
+	border: 0;
+	width: 300px;
+}
+.oca-table-noborder td {
+	border: 0;
+}
+.oca-table-noborder thead td {
+	padding: 0;
+}
+.oca-table-noborder thead td a, .oca-table-noborder thead td {
+	text-decoration: none;
+	color: #222222;
+	font-weight: bold;
+}
+.oca-table-noborder tbody td a {
+	text-decoration: underline;
+}
+.oca-table-noborder tbody td {
+	vertical-align: middle;
+	padding: 0;
+	background: #FFFFFF;
+}
+.oca-table-noborder .left {
+	text-align: left;
+	padding: 0;
+}
+.oca-table-noborder .right {
+	text-align: right;
+	padding: 0;
+}
+.oca-table-noborder .center {
+	text-align: center;
+	padding: 0;
+}
+.oca-table-help {
+	border-collapse: collapse;
+	border: 0;
+	width: 100%;
+}
+.oca-table-help td {
+	border-top: 1px solid #DDDDDD;
+}
+.oca-table-help .left {
+	vertical-align: top;
+	text-align: left;
+	padding: 7px;
+	width: 15%;
+	border-right: 1px solid #DDDDDD;
+	font-weight: bold;
+}
+.oca-table-help .right {
+	vertical-align: top;
+	text-align: left;
+	padding: 7px;
+}
